@@ -3,83 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP</title>
+    <title>Livre Parar SP - Waze Style</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
-        :root { --verde: #10b981; --amarelo: #f59e0b; --vermelho: #ef4444; --azul: #2563eb; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; margin: 0; padding: 0; }
-        
-        .nav { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
-        .tab { flex: 1; padding: 18px; text-align: center; font-weight: bold; cursor: pointer; color: #94a3b8; font-size: 0.8rem; }
-        .tab.active { color: var(--azul); border-bottom: 3px solid var(--azul); }
-
-        .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
-        .view.active { display: block; }
-
-        .card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .map-box { width: 100%; border-radius: 15px; background: #e2e8f0; border: 1px solid #e2e8f0; }
-        #mini-mapa { height: 220px; margin-bottom: 10px; }
-        #mapa-calor { height: 450px; }
-
-        label { font-size: 0.75rem; font-weight: bold; color: #64748b; text-transform: uppercase; display: block; margin-top: 15px; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 1rem; box-sizing: border-box; }
-
-        .btn-indicar { 
-            width: 100%; background: var(--azul); color: white; border: none; padding: 18px; border-radius: 15px; 
-            font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1.1rem;
-            transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        :root { 
+            --waze-blue: #33ccff; 
+            --waze-dark: #222222;
+            --verde: #10b981; --amarelo: #f59e0b; --vermelho: #ef4444; 
         }
-        .btn-indicar:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4); }
+        
+        body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); }
+        
+        /* Navegação Estilo Pílula */
+        .nav { 
+            display: flex; background: white; padding: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;
+        }
+        .tab { 
+            flex: 1; padding: 12px; text-align: center; font-weight: 800; cursor: pointer; 
+            color: #94a3b8; font-size: 0.75rem; border-radius: 20px; transition: 0.3s;
+        }
+        .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
 
-        .zona-azul-container { display: flex; gap: 20px; margin-top: 8px; }
-        .radio-item { display: flex; align-items: center; gap: 6px; font-weight: bold; color: #334155; cursor: pointer; }
-        .radio-item input { width: 18px; height: 18px; accent-color: var(--azul); }
+        .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .legenda { margin-top: 12px; display: flex; justify-content: space-between; gap: 8px; }
-        .legenda-item { flex: 1; text-align: center; font-size: 0.65rem; font-weight: bold; padding: 10px 5px; border-radius: 10px; color: white; line-height: 1.2; }
-        .leg-v { background: var(--verde); }
-        .leg-a { background: var(--amarelo); }
-        .leg-r { background: var(--vermelho); }
+        /* Cards Estilo Waze */
+        .card { 
+            background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; 
+            border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+        
+        .map-box { 
+            width: 100%; border-radius: 20px; background: #e2e8f0; 
+            border: 3px solid var(--waze-dark); overflow: hidden;
+        }
+        #mini-mapa { height: 200px; margin-bottom: 15px; }
+        #mapa-calor { height: 480px; }
 
-        /* Estilo da Janela do Pin */
-        .info-card { padding: 5px; min-width: 150px; font-family: 'Segoe UI', sans-serif; }
-        .info-btn { background: var(--azul); color: white; border: none; padding: 8px; width: 100%; border-radius: 6px; margin-top: 8px; cursor: pointer; font-weight: bold; }
+        label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
+        
+        select, input { 
+            width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); 
+            background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px;
+        }
+
+        /* Botão Interativo */
+        .btn-indicar { 
+            width: 100%; background: #33ccff; color: var(--waze-dark); border: 3px solid var(--waze-dark); 
+            padding: 18px; border-radius: 50px; font-weight: 900; cursor: pointer; margin-top: 25px; 
+            font-size: 1.2rem; transition: 0.2s; box-shadow: 0 6px 0px var(--waze-dark);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-indicar:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--waze-dark); }
+
+        /* Zona Azul Estilo Seleção */
+        .zona-azul-container { display: flex; gap: 15px; margin-top: 10px; }
+        .radio-item { 
+            flex: 1; background: #f1f5f9; padding: 12px; border-radius: 15px; 
+            border: 3px solid var(--waze-dark); text-align: center; font-weight: 800; cursor: pointer;
+        }
+        .radio-item input { display: none; }
+        .radio-item:has(input:checked) { background: #ffdf00; }
+
+        /* Legenda Flutuante */
+        .legenda { 
+            display: flex; justify-content: space-around; gap: 10px; margin-top: 15px;
+        }
+        .legenda-item { 
+            flex: 1; font-size: 0.65rem; font-weight: 900; padding: 8px; border-radius: 12px; 
+            border: 2px solid var(--waze-dark); color: var(--waze-dark); text-align: center;
+        }
+
+        /* InfoWindow Style */
+        .waze-popup { font-family: 'Open Sans', sans-serif; padding: 5px; text-align: center; }
+        .waze-popup b { font-size: 1.1rem; display: block; margin-bottom: 5px; }
+        .btn-go { 
+            background: #33ccff; border: 2px solid var(--waze-dark); padding: 8px 15px; 
+            border-radius: 20px; font-weight: 900; cursor: pointer; margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 
 <nav class="nav">
-    <div class="tab active" onclick="switchTab('registrar')">INDICAR VAGA</div>
-    <div class="tab" onclick="switchTab('calor')">VAGAS DISPONÍVEIS NA REGIÃO</div>
+    <div class="tab active" onclick="switchTab('registrar')">RELATAR</div>
+    <div class="tab" onclick="switchTab('calor')">VAGAS AGORA</div>
 </nav>
 
 <div id="view-registrar" class="view active">
-    <div class="card" style="padding: 12px;">
-        <label style="margin-top:0;">📍 Local de Indicação</label>
+    <div class="card">
+        <label style="margin-top:0;">📍 Onde você está?</label>
         <div id="mini-mapa" class="map-box"></div>
         
-        <div style="padding: 0 8px 8px 8px;">
-            <label>Tipo de Via</label>
-            <select id="tipo_via">
-                <option value="Rua Residencial">Rua Residencial</option>
-                <option value="Avenida">Avenida</option>
-                <option value="Praça">Praça</option>
-                <option value="Estacionamento">Estacionamento</option>
-            </select>
+        <label>Tipo de Via</label>
+        <select id="tipo_via">
+            <option value="Rua Residencial">🏠 Residencial</option>
+            <option value="Avenida">🛣️ Avenida</option>
+            <option value="Praça">🌳 Praça</option>
+            <option value="Estacionamento">🅿️ Estacionamento</option>
+        </select>
 
-            <label>Quantidade de Vagas Livres</label>
-            <input type="number" id="qtd" placeholder="Ex: 12" inputmode="numeric">
+        <label>Quantas Vagas viu?</label>
+        <input type="number" id="qtd" placeholder="Ex: 5" inputmode="numeric">
 
-            <label>Precisa de Zona Azul?</label>
-            <div class="zona-azul-container">
-                <label class="radio-item"><input type="radio" name="za" value="Sim"> Sim</label>
-                <label class="radio-item"><input type="radio" name="za" value="Não" checked> Não</label>
-            </div>
-
-            <button class="btn-indicar" onclick="salvarVaga()">INDICAR VAGAS AGORA</button>
+        <label>Zona Azul?</label>
+        <div class="zona-azul-container">
+            <label class="radio-item"><input type="radio" name="za" value="Sim"> SIM</label>
+            <label class="radio-item"><input type="radio" name="za" value="Não" checked> NÃO</label>
         </div>
+
+        <button class="btn-indicar" onclick="salvarVaga()">Enviar Relato!</button>
     </div>
 </div>
 
@@ -87,9 +124,9 @@
     <div class="card" style="padding: 10px;">
         <div id="mapa-calor" class="map-box"></div>
         <div class="legenda">
-            <div class="legenda-item leg-v">MAIS DE 10<br>Muitas Vagas</div>
-            <div class="legenda-item leg-a">5 A 10 VAGAS<br>Moderado</div>
-            <div class="legenda-item leg-r">ATÉ 5 VAGAS<br>Poucas Vagas</div>
+            <div class="legenda-item" style="background:var(--verde)">+10 VAGAS</div>
+            <div class="legenda-item" style="background:var(--amarelo)">5-10 VAGAS</div>
+            <div class="legenda-item" style="background:var(--vermelho)">POUCAS</div>
         </div>
     </div>
 </div>
@@ -105,7 +142,6 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    
     let userLoc = { lat: -23.5505, lng: -46.6333 };
     let mapReg, mapCal, heatmap, infoWindow;
 
@@ -121,10 +157,11 @@
         navigator.geolocation.getCurrentPosition(p => {
             userLoc = { lat: p.coords.latitude, lng: p.coords.longitude };
             mapReg = new google.maps.Map(document.getElementById("mini-mapa"), {
-                zoom: 17, center: userLoc, disableDefaultUI: true, gestureHandling: "none"
+                zoom: 17, center: userLoc, disableDefaultUI: true, gestureHandling: "none",
+                styles: wazeMapStyle 
             });
-            new google.maps.Marker({ position: userLoc, map: mapReg });
-        }, null, { enableHighAccuracy: true });
+            new google.maps.Marker({ position: userLoc, map: mapReg, icon: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png' });
+        });
     };
 
     function switchTab(t) {
@@ -141,50 +178,30 @@
 
     function renderHeatmap() {
         mapCal = new google.maps.Map(document.getElementById("mapa-calor"), {
-            zoom: 15, center: userLoc, disableDefaultUI: true
+            zoom: 15, center: userLoc, disableDefaultUI: true, styles: wazeMapStyle
         });
 
-        db.ref('vagas_sp').once('value', snapshot => {
+        db.ref('vagas_sp').on('value', snapshot => {
             const data = snapshot.val();
             if(!data) return;
-
             const heatPoints = [];
             Object.values(data).forEach(v => {
-                // Adiciona para o calor
                 heatPoints.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
-
-                // Adiciona o PIN com detalhes
-                let corPin = v.qtd > 10 ? "#10b981" : (v.qtd >= 5 ? "#f59e0b" : "#ef4444");
-                
+                let color = v.qtd > 10 ? '#10b981' : (v.qtd >= 5 ? '#f59e0b' : '#ef4444');
                 const marker = new google.maps.Marker({
                     position: { lat: v.lat, lng: v.lng },
                     map: mapCal,
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        fillColor: corPin, fillOpacity: 0.9, scale: 10, strokeColor: "white", strokeWeight: 2
-                    }
+                    icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: color, fillOpacity: 1, scale: 12, strokeColor: '#222', strokeWeight: 3 }
                 });
-
                 marker.addListener("click", () => {
-                    const content = `
-                        <div class="info-card">
-                            <b style="color:var(--azul);font-size:1.1rem">${v.tipo}</b><br>
-                            <b>Vagas:</b> ${v.qtd}<br>
-                            <b>Zona Azul:</b> ${v.zona_azul}<br>
-                            <button class="info-btn" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}')">IR PARA O LOCAL 📍</button>
-                        </div>
-                    `;
-                    infoWindow.setContent(content);
+                    infoWindow.setContent(`<div class="waze-popup"><b>${v.tipo}</b>Vagas: ${v.qtd}<br>Zona Azul: ${v.zona_azul}<br><button class="btn-go" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}')">VAMOS!</button></div>`);
                     infoWindow.open(mapCal, marker);
                 });
             });
-
+            if(heatmap) heatmap.setMap(null);
             heatmap = new google.maps.visualization.HeatmapLayer({
-                data: heatPoints,
-                map: mapCal,
-                radius: 50,
-                opacity: 0.6,
-                gradient: ['rgba(0, 255, 255, 0)', 'rgba(239, 68, 68, 1)', 'rgba(245, 158, 11, 1)', 'rgba(16, 185, 129, 1)']
+                data: heatPoints, map: mapCal, radius: 50, opacity: 0.6,
+                gradient: ['rgba(0,0,0,0)', 'rgba(239,68,68,1)', 'rgba(245,158,11,1)', 'rgba(16,185,129,1)']
             });
         });
     }
@@ -192,20 +209,32 @@
     async function salvarVaga() {
         const qtd = document.getElementById('qtd').value;
         const za = document.querySelector('input[name="za"]:checked').value;
-        if(!qtd) return alert("Informe a quantidade!");
+        if(!qtd) return alert("Quantas vagas?");
 
-        navigator.geolocation.getCurrentPosition(async (p) => {
-            await db.ref('vagas_sp').push({
-                qtd: parseInt(qtd),
-                tipo: document.getElementById('tipo_via').value,
-                zona_azul: za,
-                lat: p.coords.latitude, lng: p.coords.longitude,
-                ts: Date.now()
-            });
-            alert("Vaga indicada com sucesso!");
-            document.getElementById('qtd').value = "";
+        // Feedback Instantâneo (Otimista)
+        const btn = document.querySelector('.btn-indicar');
+        btn.innerText = "ENVIADO! ✨";
+        btn.style.background = "#ffdf00";
+        
+        db.ref('vagas_sp').push({
+            qtd: parseInt(qtd),
+            tipo: document.getElementById('tipo_via').value,
+            zona_azul: za, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now()
         });
+
+        setTimeout(() => {
+            btn.innerText = "Enviar Relato!";
+            btn.style.background = "#33ccff";
+            document.getElementById('qtd').value = "";
+            alert("Vaga compartilhada com a comunidade!");
+        }, 1000);
     }
+
+    const wazeMapStyle = [
+        { "featureType": "landscape", "stylers": [{ "color": "#f0f3f6" }] },
+        { "featureType": "road", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }] },
+        { "featureType": "road.arterial", "elementType": "geometry", "stylers": [{ "color": "#fffbc2" }] }
+    ];
 
     window.onload = start;
 </script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP - V3.5</title>
+    <title>Livre Parar SP - V3.7</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
@@ -11,18 +11,18 @@
         :root { --verde: #10b981; --amarelo: #f59e0b; --vermelho: #ef4444; --azul: #2563eb; }
         body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; margin: 0; }
         .nav { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
-        .tab { flex: 1; padding: 18px; text-align: center; font-weight: bold; cursor: pointer; color: #94a3b8; }
-        .tab.active { color: var(--azul); border-bottom: 4px solid var(--azul); }
+        .tab { flex: 1; padding: 18px; text-align: center; font-weight: bold; cursor: pointer; color: #94a3b8; border-bottom: 3px solid transparent; font-size: 0.8rem; }
+        .tab.active { color: var(--azul); border-bottom: 3px solid var(--azul); }
         .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
         .view.active { display: block; }
         .card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        
-        /* Containers com bordas visíveis para teste */
-        .map-box { width: 100%; border-radius: 12px; background: #e2e8f0; border: 2px dashed #cbd5e1; min-height: 250px; position: relative; }
-        #mapa-disponivel { min-height: 500px; }
-
-        .btn-principal { width: 100%; background: var(--azul); color: white; border: none; padding: 20px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .error-log { font-size: 0.7rem; color: red; padding: 10px; background: #fee2e2; border-radius: 8px; margin-top: 10px; display: none; }
+        .map-container { width: 100%; height: 250px; border-radius: 12px; background: #e2e8f0; }
+        #mapa-disponivel { height: 500px; }
+        label { font-size: 0.75rem; font-weight: bold; color: #64748b; text-transform: uppercase; display: block; margin-top: 10px; }
+        input, select { width: 100%; padding: 12px; margin: 5px 0 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; font-size: 1rem; }
+        .btn-principal { width: 100%; background: var(--azul); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .check-container { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-weight: bold; color: var(--azul); }
+        .check-container input { width: auto; margin: 0; }
     </style>
 </head>
 <body>
@@ -34,26 +34,32 @@
 
 <div id="view-registrar" class="view active">
     <div class="card">
-        <label style="font-weight:bold; font-size:0.8rem;">📍 LOCALIZAÇÃO GPS</label>
-        <div id="mini-mapa" class="map-box"></div>
-        <div id="log-reg" class="error-log"></div>
+        <label>📍 Sua Localização</label>
+        <div id="mini-mapa" class="map-container"></div>
     </div>
-
     <div class="card">
+        <label>Tipo de Via</label>
         <select id="tipo_via">
-            <option value="Residencial">Rua Residencial</option>
-            <option value="Movimentada">Rua Comercial</option>
-            <option value="Avenida">Avenida Principal</option>
+            <option value="Rua Residencial">Rua Residencial</option>
+            <option value="Avenida">Avenida</option>
+            <option value="Praça">Praça</option>
         </select>
-        <input type="number" id="qtd" placeholder="Qtd de Vagas Livres" style="width:100%; padding:12px; margin: 10px 0; border-radius:8px; border:1px solid #ccc;">
-        <button class="btn-principal" onclick="salvarVaga()">INDICAR VAGA AGORA</button>
+
+        <label>Quantidade de Vagas</label>
+        <input type="number" id="qtd" placeholder="Ex: 5" inputmode="numeric">
+
+        <div class="check-container">
+            <input type="checkbox" id="zona_azul">
+            <span>Precisa de Zona Azul?</span>
+        </div>
+
+        <button class="btn-principal" onclick="salvarVaga()">PUBLICAR AGORA</button>
     </div>
 </div>
 
 <div id="view-calor" class="view">
     <div class="card" style="padding: 10px;">
-        <div id="mapa-disponivel" class="map-box"></div>
-        <div id="log-calor" class="error-log"></div>
+        <div id="mapa-disponivel" class="map-container"></div>
     </div>
 </div>
 
@@ -69,37 +75,25 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let userLoc = { lat: -23.5505, lng: -46.6333 };
-    let mapReg, mapDispo;
+    let mapReg, mapDispo, infoWindow;
 
-    // Função de carregamento forçado
-    function startApp() {
-        navigator.geolocation.getCurrentPosition(p => {
-            userLoc.lat = p.coords.latitude;
-            userLoc.lng = p.coords.longitude;
-            loadGoogleScript();
-        }, () => {
-            alert("Por favor, ative o GPS!");
-            loadGoogleScript(); // Carrega mesmo sem GPS para testar a chave
-        });
-    }
-
-    function loadGoogleScript() {
+    function loadMaps() {
         const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=visualization&callback=initMaps`;
-        script.onerror = () => { document.getElementById('log-reg').innerText = "Erro ao carregar script do Google."; document.getElementById('log-reg').style.display = 'block'; };
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=visualization&callback=initAll`;
+        script.async = true;
         document.head.appendChild(script);
     }
 
-    window.initMaps = function() {
-        try {
+    window.initAll = function() {
+        infoWindow = new google.maps.InfoWindow();
+        navigator.geolocation.getCurrentPosition(p => {
+            userLoc.lat = p.coords.latitude;
+            userLoc.lng = p.coords.longitude;
             mapReg = new google.maps.Map(document.getElementById("mini-mapa"), {
                 zoom: 17, center: userLoc, disableDefaultUI: true
             });
             new google.maps.Marker({ position: userLoc, map: mapReg });
-        } catch (e) {
-            document.getElementById('log-reg').innerText = "Erro Google: " + e.message;
-            document.getElementById('log-reg').style.display = 'block';
-        }
+        });
     };
 
     function switchTab(t) {
@@ -110,13 +104,11 @@
         } else {
             document.querySelectorAll('.tab')[1].classList.add('active');
             document.getElementById('view-calor').classList.add('active');
-            setTimeout(renderVagas, 500);
+            setTimeout(renderDisponiveis, 400);
         }
     }
 
-    function renderVagas() {
-        if (!window.google) return;
-        
+    function renderDisponiveis() {
         mapDispo = new google.maps.Map(document.getElementById("mapa-disponivel"), {
             zoom: 15, center: userLoc, disableDefaultUI: true
         });
@@ -128,40 +120,61 @@
             const heatPoints = [];
             Object.values(data).forEach(v => {
                 let cor = v.qtd > 10 ? "#10b981" : (v.qtd >= 5 ? "#f59e0b" : "#ef4444");
+                let precisaZA = v.zona_azul ? "Sim" : "Não";
 
                 const marker = new google.maps.Marker({
                     position: {lat: v.lat, lng: v.lng},
                     map: mapDispo,
                     icon: {
                         path: google.maps.SymbolPath.CIRCLE,
-                        fillColor: cor, fillOpacity: 1, scale: 14, strokeColor: "white", strokeWeight: 2
+                        fillColor: cor, fillOpacity: 0.9, scale: 15, strokeColor: "white", strokeWeight: 2
                     },
                     label: { text: v.qtd.toString(), color: "white", fontWeight: "bold" }
                 });
 
+                // CONTEÚDO DO PIN AO CLICAR
+                const conteudo = `
+                    <div style="color:#333; padding:5px;">
+                        <b style="color:var(--azul)">${v.tipo}</b><br>
+                        <b>Vagas:</b> ${v.qtd}<br>
+                        <b>Zona Azul:</b> ${precisaZA}<br><br>
+                        <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}')" 
+                                style="background:var(--azul); color:white; border:none; padding:8px; border-radius:5px; width:100%; cursor:pointer;">
+                            Navegar até aqui 📍
+                        </button>
+                    </div>
+                `;
+
                 marker.addListener("click", () => {
-                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}`);
+                    infoWindow.setContent(conteudo);
+                    infoWindow.open(mapDispo, marker);
                 });
 
                 heatPoints.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
             });
 
-            new google.maps.visualization.HeatmapLayer({ data: heatPoints, map: mapDispo, radius: 40 });
+            new google.maps.visualization.HeatmapLayer({
+                data: heatPoints, map: mapDispo, radius: 40, opacity: 0.6
+            });
         });
     }
 
     async function salvarVaga() {
         const qtd = document.getElementById('qtd').value;
         if(!qtd) return alert("Informe a quantidade!");
+        
         await db.ref('vagas_sp').push({
             qtd: parseInt(qtd),
             tipo: document.getElementById('tipo_via').value,
+            zona_azul: document.getElementById('zona_azul').checked,
             lat: userLoc.lat, lng: userLoc.lng, ts: Date.now()
         });
-        alert("Vaga salva!");
+        alert("Vaga registrada com sucesso!");
+        document.getElementById('qtd').value = "";
+        document.getElementById('zona_azul').checked = false;
     }
 
-    window.onload = startApp;
+    window.onload = loadMaps;
 </script>
 </body>
 </html>

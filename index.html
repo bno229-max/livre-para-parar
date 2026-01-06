@@ -3,38 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP - V3.7</title>
+    <title>Livre Parar SP - V3.8</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
         :root { --verde: #10b981; --amarelo: #f59e0b; --vermelho: #ef4444; --azul: #2563eb; }
         body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; margin: 0; }
+        
+        /* Navegação */
         .nav { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
         .tab { flex: 1; padding: 18px; text-align: center; font-weight: bold; cursor: pointer; color: #94a3b8; border-bottom: 3px solid transparent; font-size: 0.8rem; }
         .tab.active { color: var(--azul); border-bottom: 3px solid var(--azul); }
+
         .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
         .view.active { display: block; }
+
         .card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .map-container { width: 100%; height: 250px; border-radius: 12px; background: #e2e8f0; }
-        #mapa-disponivel { height: 500px; }
+        .map-container { width: 100%; height: 280px; border-radius: 12px; background: #e2e8f0; }
+        #mapa-disponivel { height: 550px; }
+
         label { font-size: 0.75rem; font-weight: bold; color: #64748b; text-transform: uppercase; display: block; margin-top: 10px; }
         input, select { width: 100%; padding: 12px; margin: 5px 0 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; font-size: 1rem; }
-        .btn-principal { width: 100%; background: var(--azul); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .check-container { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-weight: bold; color: var(--azul); }
-        .check-container input { width: auto; margin: 0; }
+
+        /* Botão com Brilho e Hover */
+        .btn-indicar { 
+            width: 100%; background: var(--azul); color: white; border: none; padding: 18px; border-radius: 12px; 
+            font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1rem;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+            box-shadow: 0 0 0 rgba(37, 99, 235, 0);
+        }
+        .btn-indicar:hover { 
+            background: #1d4ed8; transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3), 0 0 15px rgba(37, 99, 235, 0.2);
+        }
+        .btn-indicar:active { transform: translateY(0); }
+
+        /* Estilo para Radio Buttons de Zona Azul */
+        .zona-azul-container { display: flex; gap: 20px; margin: 10px 0; }
+        .radio-item { display: flex; align-items: center; gap: 8px; font-weight: bold; cursor: pointer; }
+        .radio-item input { width: 18px; height: 18px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <nav class="nav">
     <div class="tab active" onclick="switchTab('registrar')">INDICAR VAGAS</div>
-    <div class="tab" onclick="switchTab('calor')">VAGAS DISPONÍVEIS</div>
+    <div class="tab" onclick="switchTab('calor')">VAGAS DISPONÍVEIS NA REGIÃO</div>
 </nav>
 
 <div id="view-registrar" class="view active">
     <div class="card">
-        <label>📍 Sua Localização</label>
+        <label>📍 Sua Localização Atual</label>
         <div id="mini-mapa" class="map-container"></div>
     </div>
     <div class="card">
@@ -46,14 +66,15 @@
         </select>
 
         <label>Quantidade de Vagas</label>
-        <input type="number" id="qtd" placeholder="Ex: 5" inputmode="numeric">
+        <input type="number" id="qtd" placeholder="Ex: 12" inputmode="numeric">
 
-        <div class="check-container">
-            <input type="checkbox" id="zona_azul">
-            <span>Precisa de Zona Azul?</span>
+        <label>Precisa de Zona Azul?</label>
+        <div class="zona-azul-container">
+            <label class="radio-item"><input type="radio" name="za" value="Sim"> Sim</label>
+            <label class="radio-item"><input type="radio" name="za" value="Não" checked> Não</label>
         </div>
 
-        <button class="btn-principal" onclick="salvarVaga()">PUBLICAR AGORA</button>
+        <button class="btn-indicar" onclick="salvarVaga()">INDICAR VAGAS AGORA</button>
     </div>
 </div>
 
@@ -75,7 +96,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let userLoc = { lat: -23.5505, lng: -46.6333 };
-    let mapReg, mapDispo, infoWindow;
+    let mapReg, mapDispo, infoWindow, heatmap;
 
     function loadMaps() {
         const script = document.createElement('script');
@@ -119,59 +140,74 @@
 
             const heatPoints = [];
             Object.values(data).forEach(v => {
-                let cor = v.qtd > 10 ? "#10b981" : (v.qtd >= 5 ? "#f59e0b" : "#ef4444");
-                let precisaZA = v.zona_azul ? "Sim" : "Não";
+                // Cores definidas por você: >10 verde, 5 amarelo, 1 vermelho
+                let cor = "#ef4444"; // Vermelho
+                if(v.qtd >= 10) cor = "#10b981"; // Verde
+                else if(v.qtd >= 5) cor = "#f59e0b"; // Amarelo
 
+                // PINS
                 const marker = new google.maps.Marker({
                     position: {lat: v.lat, lng: v.lng},
                     map: mapDispo,
                     icon: {
                         path: google.maps.SymbolPath.CIRCLE,
-                        fillColor: cor, fillOpacity: 0.9, scale: 15, strokeColor: "white", strokeWeight: 2
+                        fillColor: cor, fillOpacity: 0.9, scale: 16, strokeColor: "white", strokeWeight: 2
                     },
                     label: { text: v.qtd.toString(), color: "white", fontWeight: "bold" }
                 });
 
-                // CONTEÚDO DO PIN AO CLICAR
-                const conteudo = `
-                    <div style="color:#333; padding:5px;">
-                        <b style="color:var(--azul)">${v.tipo}</b><br>
-                        <b>Vagas:</b> ${v.qtd}<br>
-                        <b>Zona Azul:</b> ${precisaZA}<br><br>
-                        <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}')" 
-                                style="background:var(--azul); color:white; border:none; padding:8px; border-radius:5px; width:100%; cursor:pointer;">
-                            Navegar até aqui 📍
-                        </button>
-                    </div>
-                `;
-
                 marker.addListener("click", () => {
-                    infoWindow.setContent(conteudo);
+                    const desc = `
+                        <div style="font-family:sans-serif; padding:8px; line-height:1.4;">
+                            <b style="color:var(--azul); font-size:1.1rem;">${v.tipo}</b><br>
+                            <b>Quantidade:</b> ${v.qtd} vagas<br>
+                            <b>Zona Azul:</b> ${v.zona_azul}<br><br>
+                            <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}')" 
+                                    style="background:var(--azul); color:white; border:none; padding:10px; border-radius:8px; width:100%; cursor:pointer; font-weight:bold;">
+                                NAVEGAR ATÉ A VAGA 📍
+                            </button>
+                        </div>`;
+                    infoWindow.setContent(desc);
                     infoWindow.open(mapDispo, marker);
                 });
 
-                heatPoints.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
+                // Adiciona pontos ao Mapa de Calor com peso baseado na quantidade
+                heatPoints.push({
+                    location: new google.maps.LatLng(v.lat, v.lng),
+                    weight: v.qtd
+                });
             });
 
-            new google.maps.visualization.HeatmapLayer({
-                data: heatPoints, map: mapDispo, radius: 40, opacity: 0.6
+            // Configuração do Heatmap para respeitar o gradiente de cores
+            heatmap = new google.maps.visualization.HeatmapLayer({
+                data: heatPoints,
+                map: mapDispo,
+                radius: 40,
+                opacity: 0.7,
+                gradient: [
+                    'rgba(255, 255, 255, 0)',
+                    'rgba(239, 68, 68, 0.6)',   // Vermelho (vagas escassas/baixa qtd)
+                    'rgba(245, 158, 11, 0.8)',  // Amarelo
+                    'rgba(16, 185, 129, 1)'     // Verde (Muitas vagas)
+                ]
             });
         });
     }
 
     async function salvarVaga() {
         const qtd = document.getElementById('qtd').value;
-        if(!qtd) return alert("Informe a quantidade!");
+        const za = document.querySelector('input[name="za"]:checked').value;
+        if(!qtd) return alert("Informe a quantidade de vagas!");
         
         await db.ref('vagas_sp').push({
             qtd: parseInt(qtd),
             tipo: document.getElementById('tipo_via').value,
-            zona_azul: document.getElementById('zona_azul').checked,
+            zona_azul: za,
             lat: userLoc.lat, lng: userLoc.lng, ts: Date.now()
         });
-        alert("Vaga registrada com sucesso!");
+        
+        alert("Vaga indicada com sucesso!");
         document.getElementById('qtd').value = "";
-        document.getElementById('zona_azul').checked = false;
     }
 
     window.onload = loadMaps;

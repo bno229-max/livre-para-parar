@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Livre Parar SP - V3.5</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <style>
+        :root { --verde: #10b981; --amarelo: #f59e0b; --vermelho: #ef4444; --azul: #2563eb; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; margin: 0; }
+        .nav { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
+        .tab { flex: 1; padding: 18px; text-align: center; font-weight: bold; cursor: pointer; color: #94a3b8; }
+        .tab.active { color: var(--azul); border-bottom: 4px solid var(--azul); }
+        .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
+        .view.active { display: block; }
+        .card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        
+        /* Containers com bordas visíveis para teste */
+        .map-box { width: 100%; border-radius: 12px; background: #e2e8f0; border: 2px dashed #cbd5e1; min-height: 250px; position: relative; }
+        #mapa-disponivel { min-height: 500px; }
+
+        .btn-principal { width: 100%; background: var(--azul); color: white; border: none; padding: 20px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .error-log { font-size: 0.7rem; color: red; padding: 10px; background: #fee2e2; border-radius: 8px; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="tab active" onclick="switchTab('registrar')">INDICAR VAGAS</div>
+    <div class="tab" onclick="switchTab('calor')">VAGAS DISPONÍVEIS</div>
+</nav>
+
+<div id="view-registrar" class="view active">
+    <div class="card">
+        <label style="font-weight:bold; font-size:0.8rem;">📍 LOCALIZAÇÃO GPS</label>
+        <div id="mini-mapa" class="map-box"></div>
+        <div id="log-reg" class="error-log"></div>
+    </div>
+
+    <div class="card">
+        <select id="tipo_via">
+            <option value="Residencial">Rua Residencial</option>
+            <option value="Movimentada">Rua Comercial</option>
+            <option value="Avenida">Avenida Principal</option>
+        </select>
+        <input type="number" id="qtd" placeholder="Qtd de Vagas Livres" style="width:100%; padding:12px; margin: 10px 0; border-radius:8px; border:1px solid #ccc;">
+        <button class="btn-principal" onclick="salvarVaga()">INDICAR VAGA AGORA</button>
+    </div>
+</div>
+
+<div id="view-calor" class="view">
+    <div class="card" style="padding: 10px;">
+        <div id="mapa-disponivel" class="map-box"></div>
+        <div id="log-calor" class="error-log"></div>
+    </div>
+</div>
+
+<script>
+    const GOOGLE_KEY = "AIzaSyAyeljGisp0yk242H4s3VC_xFeBwESDrjU";
+    const firebaseConfig = {
+        apiKey: "AIzaSyCv33-vr99tYWdxdeJP4rsp39ro5M2gZNo",
+        authDomain: "olhar-urbano.firebaseapp.com",
+        databaseURL: "https://olhar-urbano-default-rtdb.firebaseio.com",
+        projectId: "olhar-urbano"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let userLoc = { lat: -23.5505, lng: -46.6333 };
+    let mapReg, mapDispo;
+
+    // Função de carregamento forçado
+    function startApp() {
+        navigator.geolocation.getCurrentPosition(p => {
+            userLoc.lat = p.coords.latitude;
+            userLoc.lng = p.coords.longitude;
+            loadGoogleScript();
+        }, () => {
+            alert("Por favor, ative o GPS!");
+            loadGoogleScript(); // Carrega mesmo sem GPS para testar a chave
+        });
+    }
+
+    function loadGoogleScript() {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=visualization&callback=initMaps`;
+        script.onerror = () => { document.getElementById('log-reg').innerText = "Erro ao carregar script do Google."; document.getElementById('log-reg').style.display = 'block'; };
+        document.head.appendChild(script);
+    }
+
+    window.initMaps = function() {
+        try {
+            mapReg = new google.maps.Map(document.getElementById("mini-mapa"), {
+                zoom: 17, center: userLoc, disableDefaultUI: true
+            });
+            new google.maps.Marker({ position: userLoc, map: mapReg });
+        } catch (e) {
+            document.getElementById('log-reg').innerText = "Erro Google: " + e.message;
+            document.getElementById('log-reg').style.display = 'block';
+        }
+    };
+
+    function switchTab(t) {
+        document.querySelectorAll('.tab, .view').forEach(e => e.classList.remove('active'));
+        if(t === 'registrar') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.getElementById('view-registrar').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+            document.getElementById('view-calor').classList.add('active');
+            setTimeout(renderVagas, 500);
+        }
+    }
+
+    function renderVagas() {
+        if (!window.google) return;
+        
+        mapDispo = new google.maps.Map(document.getElementById("mapa-disponivel"), {
+            zoom: 15, center: userLoc, disableDefaultUI: true
+        });
+
+        db.ref('vagas_sp').once('value', snapshot => {
+            const data = snapshot.val();
+            if(!data) return;
+
+            const heatPoints = [];
+            Object.values(data).forEach(v => {
+                let cor = v.qtd > 10 ? "#10b981" : (v.qtd >= 5 ? "#f59e0b" : "#ef4444");
+
+                const marker = new google.maps.Marker({
+                    position: {lat: v.lat, lng: v.lng},
+                    map: mapDispo,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        fillColor: cor, fillOpacity: 1, scale: 14, strokeColor: "white", strokeWeight: 2
+                    },
+                    label: { text: v.qtd.toString(), color: "white", fontWeight: "bold" }
+                });
+
+                marker.addListener("click", () => {
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}`);
+                });
+
+                heatPoints.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
+            });
+
+            new google.maps.visualization.HeatmapLayer({ data: heatPoints, map: mapDispo, radius: 40 });
+        });
+    }
+
+    async function salvarVaga() {
+        const qtd = document.getElementById('qtd').value;
+        if(!qtd) return alert("Informe a quantidade!");
+        await db.ref('vagas_sp').push({
+            qtd: parseInt(qtd),
+            tipo: document.getElementById('tipo_via').value,
+            lat: userLoc.lat, lng: userLoc.lng, ts: Date.now()
+        });
+        alert("Vaga salva!");
+    }
+
+    window.onload = startApp;
+</script>
+</body>
+</html>

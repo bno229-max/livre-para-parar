@@ -3,40 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP</title>
+    <title>Livre Parar SP - Calor</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
         :root { --verde: #10b981; --amarelo: #f59e0b; --vermelho: #ef4444; --azul: #2563eb; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; margin: 0; padding: 0; }
+        
         .nav { display: flex; background: white; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; }
-        .tab { flex: 1; padding: 18px; text-align: center; font-weight: bold; cursor: pointer; color: #94a3b8; border-bottom: 3px solid transparent; }
+        .tab { flex: 1; padding: 18px; text-align: center; font-weight: bold; cursor: pointer; color: #94a3b8; font-size: 0.8rem; }
         .tab.active { color: var(--azul); border-bottom: 3px solid var(--azul); }
+
         .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
         .view.active { display: block; }
+
         .card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        
-        /* Containers do Mapa */
-        .map-box { width: 100%; height: 300px; border-radius: 12px; background: #e2e8f0; border: 1px solid #cbd5e1; }
-        #mapa-disponivel { height: 550px; }
+        .map-box { width: 100%; height: 500px; border-radius: 12px; background: #e2e8f0; }
 
         label { font-size: 0.75rem; font-weight: bold; color: #64748b; text-transform: uppercase; display: block; margin-top: 10px; }
-        input, select { width: 100%; padding: 12px; margin: 5px 0 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+        input, select { width: 100%; padding: 12px; margin: 5px 0 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; font-size: 1rem; }
 
-        /* Botão Indicar Vagas Agora com Hover e Brilho */
         .btn-indicar { 
             width: 100%; background: var(--azul); color: white; border: none; padding: 18px; border-radius: 12px; 
             font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1rem;
-            transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            transition: 0.3s; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
-        .btn-indicar:hover { 
-            background: #1d4ed8; transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
-        }
+        .btn-indicar:hover { background: #1d4ed8; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
 
         .zona-azul-container { display: flex; gap: 20px; margin: 10px 0; font-weight: bold; }
-        .radio-item { display: flex; align-items: center; gap: 5px; }
+        .radio-item { display: flex; align-items: center; gap: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -47,10 +43,6 @@
 </nav>
 
 <div id="view-registrar" class="view active">
-    <div class="card">
-        <label>📍 Localização GPS</label>
-        <div id="mini-mapa" class="map-box"></div>
-    </div>
     <div class="card">
         <label>Tipo de Via</label>
         <select id="tipo_via">
@@ -71,12 +63,12 @@
 
 <div id="view-calor" class="view">
     <div class="card" style="padding: 10px;">
-        <div id="mapa-disponivel" class="map-box"></div>
+        <div id="mapa-calor" class="map-box"></div>
     </div>
 </div>
 
 <script>
-    // Configurações (CHAVES DO GOOGLE E FIREBASE)
+    // Configurações
     const GOOGLE_KEY = "AIzaSyAyeljGisp0yk242H4s3VC_xFeBwESDrjU";
     const firebaseConfig = {
         apiKey: "AIzaSyCv33-vr99tYWdxdeJP4rsp39ro5M2gZNo",
@@ -88,9 +80,9 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let userLoc = { lat: -23.5505, lng: -46.6333 };
-    let mapReg, mapDispo, infoWindow;
+    let googleMap, heatmap;
 
-    // 1. CARREGAR GOOGLE MAPS COM BIBLIOTECAS
+    // Carregar Google Maps
     function start() {
         const s = document.createElement('script');
         s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=visualization&callback=initApp`;
@@ -99,14 +91,9 @@
     }
 
     window.initApp = function() {
-        infoWindow = new google.maps.InfoWindow();
         navigator.geolocation.getCurrentPosition(p => {
             userLoc = { lat: p.coords.latitude, lng: p.coords.longitude };
-            mapReg = new google.maps.Map(document.getElementById("mini-mapa"), {
-                zoom: 17, center: userLoc, disableDefaultUI: true
-            });
-            new google.maps.Marker({ position: userLoc, map: mapReg });
-        }, () => console.log("Erro GPS"));
+        });
     };
 
     function switchTab(t) {
@@ -117,60 +104,44 @@
         } else {
             document.querySelectorAll('.tab')[1].classList.add('active');
             document.getElementById('view-calor').classList.add('active');
-            renderizarVagas();
+            renderHeatmap();
         }
     }
 
-    function renderizarVagas() {
-        // Reinicia o mapa para garantir que ele apareça
-        mapDispo = new google.maps.Map(document.getElementById("mapa-disponivel"), {
-            zoom: 15, center: userLoc, disableDefaultUI: true
+    function renderHeatmap() {
+        // Inicializa o mapa centralizado no usuário
+        googleMap = new google.maps.Map(document.getElementById("mapa-calor"), {
+            zoom: 15,
+            center: userLoc,
+            disableDefaultUI: true,
+            mapTypeId: 'roadmap'
         });
 
-        db.ref('vagas_sp').on('value', snapshot => {
+        // Puxa dados do Firebase
+        db.ref('vagas_sp').once('value', snapshot => {
             const data = snapshot.val();
             if(!data) return;
 
-            const heatData = [];
+            const heatPoints = [];
             Object.values(data).forEach(v => {
-                // LOGICA DE CORES: Verde > 10, Amarelo >= 5, Vermelho < 5
-                let cor = v.qtd > 10 ? "#10b981" : (v.qtd >= 5 ? "#f59e0b" : "#ef4444");
-
-                // CRIAR PIN
-                const marker = new google.maps.Marker({
-                    position: { lat: v.lat, lng: v.lng },
-                    map: mapDispo,
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        fillColor: cor, fillOpacity: 1, scale: 15, strokeColor: "white", strokeWeight: 2
-                    },
-                    label: { text: v.qtd.toString(), color: "white", fontWeight: "bold" }
+                // Adiciona o peso baseado na sua regra de negócio
+                heatPoints.push({
+                    location: new google.maps.LatLng(v.lat, v.lng),
+                    weight: v.qtd // A "intensidade" da cor depende da quantidade
                 });
-
-                // CLICK NO PIN
-                marker.addListener("click", () => {
-                    const desc = `
-                        <div style="padding:10px; font-family:sans-serif;">
-                            <b style="color:var(--azul)">${v.tipo}</b><br>
-                            <b>Vagas:</b> ${v.qtd}<br>
-                            <b>Zona Azul:</b> ${v.zona_azul}<br><br>
-                            <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}')" 
-                                    style="background:var(--azul); color:white; border:none; padding:8px; border-radius:5px; width:100%; cursor:pointer;">
-                                NAVEGAR 📍
-                            </button>
-                        </div>`;
-                    infoWindow.setContent(desc);
-                    infoWindow.open(mapDispo, marker);
-                });
-
-                heatData.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
             });
 
-            // CRIAR MAPA DE CALOR
-            new google.maps.visualization.HeatmapLayer({
-                data: heatData, map: mapDispo, radius: 40, opacity: 0.7,
+            // Cria a camada de calor idêntica ao "Olhar Urbano"
+            heatmap = new google.maps.visualization.HeatmapLayer({
+                data: heatPoints,
+                map: googleMap,
+                radius: 50,
+                opacity: 0.8,
                 gradient: [
-                    'rgba(0, 255, 255, 0)', 'rgba(239, 68, 68, 1)', 'rgba(245, 158, 11, 1)', 'rgba(16, 185, 129, 1)'
+                    'rgba(0, 255, 255, 0)',
+                    'rgba(239, 68, 68, 1)',   // VERMELHO (Poucas vagas)
+                    'rgba(245, 158, 11, 1)',  // AMARELO (Médio)
+                    'rgba(16, 185, 129, 1)'   // VERDE (Muitas vagas)
                 ]
             });
         });
@@ -179,16 +150,22 @@
     async function salvarVaga() {
         const qtd = document.getElementById('qtd').value;
         const za = document.querySelector('input[name="za"]:checked').value;
-        if(!qtd) return alert("Diga a quantidade!");
+        
+        if(!qtd) return alert("Por favor, informe a quantidade de vagas.");
 
-        await db.ref('vagas_sp').push({
-            qtd: parseInt(qtd),
-            tipo: document.getElementById('tipo_via').value,
-            zona_azul: za,
-            lat: userLoc.lat, lng: userLoc.lng, ts: Date.now()
-        });
-        alert("Vaga salva!");
-        document.getElementById('qtd').value = "";
+        // Pega localização no momento do clique para precisão
+        navigator.geolocation.getCurrentPosition(async (p) => {
+            await db.ref('vagas_sp').push({
+                qtd: parseInt(qtd),
+                tipo: document.getElementById('tipo_via').value,
+                zona_azul: za,
+                lat: p.coords.latitude,
+                lng: p.coords.longitude,
+                ts: Date.now()
+            });
+            alert("Vaga indicada com sucesso!");
+            document.getElementById('qtd').value = "";
+        }, () => alert("Erro ao obter GPS. Verifique as permissões."));
     }
 
     window.onload = start;

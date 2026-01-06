@@ -19,32 +19,34 @@
         .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
         .view.active { display: block; }
 
-        /* Cards e Inputs */
+        /* Cards e Mapas */
         .card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .map-box { width: 100%; height: 450px; border-radius: 15px; background: #e2e8f0; }
+        .map-box { width: 100%; border-radius: 15px; background: #e2e8f0; border: 1px solid #e2e8f0; }
+        #mini-mapa { height: 220px; margin-bottom: 10px; }
+        #mapa-calor { height: 450px; }
 
-        label { font-size: 0.8rem; font-weight: bold; color: #64748b; text-transform: uppercase; display: block; margin-top: 15px; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 1rem; box-sizing: border-box; }
+        label { font-size: 0.75rem; font-weight: bold; color: #64748b; text-transform: uppercase; display: block; margin-top: 15px; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 1rem; box-sizing: border-box; }
 
-        /* Botão Indicar com Brilho e Efeito Hover */
+        /* Botão Indicar com Efeito */
         .btn-indicar { 
-            width: 100%; background: var(--azul); color: white; border: none; padding: 20px; border-radius: 15px; 
+            width: 100%; background: var(--azul); color: white; border: none; padding: 18px; border-radius: 15px; 
             font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1.1rem;
             transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         }
         .btn-indicar:hover { 
-            background: #1d4ed8; transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5);
+            background: #1d4ed8; transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
         }
 
-        /* Zona Azul Sim/Não */
-        .zona-azul-container { display: flex; gap: 20px; margin-top: 10px; }
-        .radio-item { display: flex; align-items: center; gap: 8px; font-weight: bold; color: #334155; cursor: pointer; }
-        .radio-item input { width: 20px; height: 20px; accent-color: var(--azul); }
+        /* Zona Azul */
+        .zona-azul-container { display: flex; gap: 20px; margin-top: 8px; }
+        .radio-item { display: flex; align-items: center; gap: 6px; font-weight: bold; color: #334155; cursor: pointer; }
+        .radio-item input { width: 18px; height: 18px; accent-color: var(--azul); }
 
-        /* Legenda do Mapa */
-        .legenda { margin-top: 15px; display: flex; justify-content: space-between; gap: 10px; }
-        .legenda-item { flex: 1; text-align: center; font-size: 0.7rem; font-weight: bold; padding: 8px; border-radius: 8px; color: white; }
+        /* Legenda */
+        .legenda { margin-top: 12px; display: flex; justify-content: space-between; gap: 8px; }
+        .legenda-item { flex: 1; text-align: center; font-size: 0.65rem; font-weight: bold; padding: 10px 5px; border-radius: 10px; color: white; line-height: 1.2; }
         .leg-v { background: var(--verde); }
         .leg-a { background: var(--amarelo); }
         .leg-r { background: var(--vermelho); }
@@ -58,26 +60,29 @@
 </nav>
 
 <div id="view-registrar" class="view active">
-    <div class="card">
-        <h3 style="margin-top:0; color:#1e293b;">Nova Indicação</h3>
+    <div class="card" style="padding: 12px;">
+        <label style="margin-top:0;">📍 Sua Localização Atual</label>
+        <div id="mini-mapa" class="map-box"></div>
         
-        <label>Tipo de Via</label>
-        <select id="tipo_via">
-            <option value="Rua Residencial">Rua Residencial</option>
-            <option value="Avenida">Avenida</option>
-            <option value="Praça">Praça</option>
-        </select>
+        <div style="padding: 0 8px 8px 8px;">
+            <label>Tipo de Via</label>
+            <select id="tipo_via">
+                <option value="Rua Residencial">Rua Residencial</option>
+                <option value="Avenida">Avenida</option>
+                <option value="Praça">Praça</option>
+            </select>
 
-        <label>Quantidade de Vagas Livres</label>
-        <input type="number" id="qtd" placeholder="Ex: 12" inputmode="numeric">
+            <label>Quantidade de Vagas Livres</label>
+            <input type="number" id="qtd" placeholder="Ex: 12" inputmode="numeric">
 
-        <label>Precisa de Zona Azul?</label>
-        <div class="zona-azul-container">
-            <label class="radio-item"><input type="radio" name="za" value="Sim"> Sim</label>
-            <label class="radio-item"><input type="radio" name="za" value="Não" checked> Não</label>
+            <label>Precisa de Zona Azul?</label>
+            <div class="zona-azul-container">
+                <label class="radio-item"><input type="radio" name="za" value="Sim"> Sim</label>
+                <label class="radio-item"><input type="radio" name="za" value="Não" checked> Não</label>
+            </div>
+
+            <button class="btn-indicar" onclick="salvarVaga()">INDICAR VAGAS AGORA</button>
         </div>
-
-        <button class="btn-indicar" onclick="salvarVaga()">INDICAR VAGAS AGORA</button>
     </div>
 </div>
 
@@ -86,9 +91,9 @@
         <div id="mapa-calor" class="map-box"></div>
         
         <div class="legenda">
-            <div class="legenda-item leg-v">Acima de 10<br>Muitas Vagas</div>
-            <div class="legenda-item leg-a">Entre 5 e 10<br>Moderado</div>
-            <div class="legenda-item leg-r">Abaixo de 5<br>Poucas Vagas</div>
+            <div class="legenda-item leg-v">MAIS DE 10<br>Muitas Vagas</div>
+            <div class="legenda-item leg-a">5 A 10 VAGAS<br>Moderado</div>
+            <div class="legenda-item leg-r">ATÉ 5 VAGAS<br>Poucas Vagas</div>
         </div>
     </div>
 </div>
@@ -104,8 +109,9 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    
     let userLoc = { lat: -23.5505, lng: -46.6333 };
-    let googleMap, heatmap;
+    let mapReg, mapCal, heatmap;
 
     function start() {
         const s = document.createElement('script');
@@ -117,7 +123,14 @@
     window.initApp = function() {
         navigator.geolocation.getCurrentPosition(p => {
             userLoc = { lat: p.coords.latitude, lng: p.coords.longitude };
-        });
+            // Inicia o mini-mapa da tela de indicação
+            mapReg = new google.maps.Map(document.getElementById("mini-mapa"), {
+                zoom: 17, center: userLoc, disableDefaultUI: true, gestureHandling: "none"
+            });
+            new google.maps.Marker({ position: userLoc, map: mapReg });
+        }, () => {
+            alert("Por favor, ative o GPS para o mini-mapa funcionar.");
+        }, { enableHighAccuracy: true });
     };
 
     function switchTab(t) {
@@ -133,7 +146,7 @@
     }
 
     function renderHeatmap() {
-        googleMap = new google.maps.Map(document.getElementById("mapa-calor"), {
+        mapCal = new google.maps.Map(document.getElementById("mapa-calor"), {
             zoom: 15, center: userLoc, disableDefaultUI: true
         });
 
@@ -151,14 +164,14 @@
 
             heatmap = new google.maps.visualization.HeatmapLayer({
                 data: heatPoints,
-                map: googleMap,
-                radius: 50,
+                map: mapCal,
+                radius: 45,
                 opacity: 0.8,
                 gradient: [
                     'rgba(0, 255, 255, 0)',
-                    'rgba(239, 68, 68, 1)',   // Vermelho
-                    'rgba(245, 158, 11, 1)',  // Amarelo
-                    'rgba(16, 185, 129, 1)'   // Verde
+                    'rgba(239, 68, 68, 1)',  // Vermelho
+                    'rgba(245, 158, 11, 1)', // Amarelo
+                    'rgba(16, 185, 129, 1)'  // Verde
                 ]
             });
         });
@@ -167,21 +180,19 @@
     async function salvarVaga() {
         const qtd = document.getElementById('qtd').value;
         const za = document.querySelector('input[name="za"]:checked').value;
-        
-        if(!qtd) return alert("Por favor, informe a quantidade de vagas.");
+        if(!qtd) return alert("Informe a quantidade de vagas!");
 
-        navigator.geolocation.getCurrentPosition(async (p) => {
-            await db.ref('vagas_sp').push({
-                qtd: parseInt(qtd),
-                tipo: document.getElementById('tipo_via').value,
-                zona_azul: za,
-                lat: p.coords.latitude,
-                lng: p.coords.longitude,
-                ts: Date.now()
-            });
-            alert("Vaga indicada com sucesso!");
-            document.getElementById('qtd').value = "";
-        }, () => alert("Ative seu GPS para indicar a vaga!"));
+        await db.ref('vagas_sp').push({
+            qtd: parseInt(qtd),
+            tipo: document.getElementById('tipo_via').value,
+            zona_azul: za,
+            lat: userLoc.lat,
+            lng: userLoc.lng,
+            ts: Date.now()
+        });
+        
+        alert("Vaga indicada com sucesso!");
+        document.getElementById('qtd').value = "";
     }
 
     window.onload = start;

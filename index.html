@@ -13,7 +13,7 @@
             --waze-blue: #33ccff; 
             --waze-dark: #222222;
             --verde-waze: #10b981; 
-            --amarelo: #f59e0b; 
+            --amarelo-laranja: #f59e0b; 
             --vermelho: #ef4444; 
         }
         
@@ -35,7 +35,6 @@
         label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
         select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
-        /* Botão Padrão com Sombra e Efeitos */
         .btn-acao { 
             width: 100%; border: 3px solid var(--waze-dark); padding: 18px; border-radius: 50px; 
             font-weight: 900; cursor: pointer; font-size: 1rem; transition: all 0.1s; 
@@ -53,7 +52,7 @@
         .radio-item input { display: none; }
 
         .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; }
-        .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: var(--waze-dark); text-align: center; }
+        .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: white; text-align: center; text-transform: uppercase; }
 
         .footer-adm { text-align: center; padding: 30px; opacity: 0.2; }
         .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; }
@@ -81,9 +80,9 @@
         </div>
         <div id="stats-master" style="font-size: 0.8rem; font-weight: 700;">
             <p>Indicações Totais: <span id="master-total" style="color:var(--waze-blue)">0</span></p>
-            <p>Cliques em 'VAMOS LÁ': <span id="master-cliques" style="color:var(--verde-waze)">0</span></p>
+            <p>Engajamento (VAMOS LÁ): <span id="master-cliques" style="color:var(--verde-waze)">0</span></p>
         </div>
-        <button class="btn-acao" style="background:var(--waze-dark); color:white; font-size:0.8rem;" onclick="alert('Exportando base...')">Exportar Dados</button>
+        <button class="btn-acao" style="background:var(--waze-dark); color:white; font-size:0.8rem;" onclick="alert('Exportando base CSV...')">Exportar Dados</button>
     </div>
 </div>
 
@@ -123,9 +122,9 @@
     <div class="card" style="padding: 10px;">
         <div id="mapa-calor" class="map-box"></div>
         <div class="legenda">
-            <div class="legenda-item" style="background:var(--verde-waze); color:white;">MAIS DE 10</div>
-            <div class="legenda-item" style="background:var(--amarelo); color:white;">5 A 10</div>
-            <div class="legenda-item" style="background:var(--vermelho); color:white;">POUCAS</div>
+            <div class="legenda-item" style="background:var(--verde-waze)">MAIS DE 10</div>
+            <div class="legenda-item" style="background:var(--amarelo-laranja)">5 A 10</div>
+            <div class="legenda-item" style="background:var(--vermelho)">POUCAS</div>
         </div>
     </div>
 </div>
@@ -203,18 +202,19 @@
 
     function renderHeatmap() {
         mapCal = new google.maps.Map(document.getElementById("mapa-calor"), { zoom: 15, center: userLoc, disableDefaultUI: true, styles: wazeStyle });
+        
         db.ref('vagas_sp').on('value', snap => {
             const data = snap.val(); if(!data) return;
             const points = [];
+            
             Object.keys(data).forEach(id => {
                 const v = data[id];
                 points.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
                 
-                // Pin Profissional 📍
                 const m = new google.maps.Marker({ 
                     position: {lat:v.lat, lng:v.lng}, map: mapCal, 
-                    label: { text: "📍", fontSize: v.cliques > 10 ? "24px" : "18px" },
-                    icon: { path: google.maps.SymbolPath.CIRCLE, fillOpacity: 0, strokeOpacity: 0 } // Esconde o circulo padrao
+                    label: { text: "📍", fontSize: v.cliques > 5 ? "26px" : "20px" },
+                    icon: { path: google.maps.SymbolPath.CIRCLE, fillOpacity: 0, strokeOpacity: 0 }
                 });
 
                 m.addListener("click", () => {
@@ -231,8 +231,21 @@
                     infoWindow.open(mapCal, m);
                 });
             });
+
             if(heatmap) heatmap.setMap(null);
-            heatmap = new google.maps.visualization.HeatmapLayer({ data: points, map: mapCal, radius: 40 });
+            
+            // GRADIENTE SINCRONIZADO COM A LEGENDA
+            heatmap = new google.maps.visualization.HeatmapLayer({ 
+                data: points, 
+                map: mapCal, 
+                radius: 45,
+                gradient: [
+                    'rgba(0, 255, 255, 0)',
+                    'rgba(239, 68, 68, 1)',   /* Vermelho (Poucas) */
+                    'rgba(245, 158, 11, 1)',  /* Laranja (5-10) */
+                    'rgba(16, 185, 129, 1)'   /* Verde Waze (Mais de 10) */
+                ]
+            });
         });
     }
     window.onload = start;

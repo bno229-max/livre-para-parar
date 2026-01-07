@@ -2,21 +2,37 @@
   "name": "Pode Parar Aqui",
   "short_name": "PodeParar",
   "description": "Encontre e indique vagas livres em tempo real.",
+  "lang": "pt-BR",
   "start_url": "/livre-para-parar/index.html",
   "scope": "/livre-para-parar/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#33ccff",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "icone-192.png",
+      "src": "/livre-para-parar/icone-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "icone-512.png",
+      "src": "/livre-para-parar/icone-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/livre-para-parar/icone-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/livre-para-parar/icone-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

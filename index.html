@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP</title>
+    <title>Livre Parar SP - Dashboard Master</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -19,19 +19,21 @@
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
+        /* Navegação */
         .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: 0.2s; text-transform: uppercase; }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
 
         .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s ease-out; }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
         .card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.05); }
         .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; }
         #mini-mapa { height: 200px; margin-bottom: 15px; }
         #mapa-calor { height: 480px; }
 
+        /* Inputs e Labels */
         label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
         select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
@@ -52,19 +54,26 @@
         .radio-item input { display: none; }
 
         .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; }
-        .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: white; text-align: center; text-transform: uppercase; }
+        .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: white; text-align: center; }
 
         .footer-adm { text-align: center; padding: 30px; opacity: 0.2; }
         .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; }
 
+        /* Estilo Dashboard Master */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 20px; box-sizing: border-box; }
-        .master-card { background: #fff; width: 100%; max-width: 400px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); }
+        .master-card { background: #f0f3f6; width: 100%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); max-height: 90vh; overflow-y: auto; }
+        
+        .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 12px; border-radius: 20px; text-align: center; box-shadow: 4px 4px 0px rgba(0,0,0,0.1); }
+        .mini-card-adm.full { grid-column: span 2; }
+        .valor-adm { display: block; font-size: 1.6rem; font-weight: 900; color: var(--waze-blue); line-height: 1; }
+        .desc-adm { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; color: #64748b; margin-top: 5px; display: block; }
     </style>
 </head>
 <body>
 
 <div id="modal-login-adm" class="modal-overlay">
-    <div class="master-card" style="text-align: center;">
+    <div class="master-card" style="text-align: center; background: white;">
         <h2 style="margin-bottom: 20px;">🔒 Terminal Master</h2>
         <input type="password" id="senha-adm" placeholder="Senha de Acesso" style="text-align: center;">
         <button class="btn-acao btn-indicar" onclick="validarAcesso()">Entrar</button>
@@ -74,15 +83,39 @@
 
 <div id="modal-acesso-master" class="modal-overlay">
     <div class="master-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0; color:var(--waze-blue);">ACESSO MASTER</h3>
-            <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:8px; font-weight:800; cursor:pointer; font-size:0.6rem;">SAIR</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0; color:var(--waze-dark); font-weight: 900;">DASHBOARD BI</h3>
+            <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:10px; font-weight:800; cursor:pointer; font-size:0.6rem;">FECHAR</button>
         </div>
-        <div id="stats-master" style="font-size: 0.8rem; font-weight: 700;">
-            <p>Indicações Totais: <span id="master-total" style="color:var(--waze-blue)">0</span></p>
-            <p>Engajamento (VAMOS LÁ): <span id="master-cliques" style="color:var(--verde-waze)">0</span></p>
+
+        <div class="grid-master">
+            <div class="mini-card-adm full" style="border-color: var(--verde-waze);">
+                <span class="valor-adm" id="m-vagas-total" style="color: var(--verde-waze);">0</span>
+                <span class="desc-adm">Total de Vagas Indicadas (Soma Geral)</span>
+            </div>
+
+            <div class="mini-card-adm">
+                <span class="valor-adm" id="m-posts">0</span>
+                <span class="desc-adm">Indicações de Usuários</span>
+            </div>
+
+            <div class="mini-card-adm">
+                <span class="valor-adm" id="m-cliques" style="color: var(--amarelo-laranja);">0</span>
+                <span class="desc-adm">Foram até a vaga (Engajamento)</span>
+            </div>
+
+            <div class="mini-card-adm">
+                <span class="valor-adm" id="m-za-sim" style="color: var(--waze-blue);">0</span>
+                <span class="desc-adm">Precisa de Zona Azul (SIM)</span>
+            </div>
+
+            <div class="mini-card-adm">
+                <span class="valor-adm" id="m-za-nao">0</span>
+                <span class="desc-adm">Precisa de Zona Azul (NÃO)</span>
+            </div>
         </div>
-        <button class="btn-acao" style="background:var(--waze-dark); color:white; font-size:0.8rem;" onclick="alert('Exportando base CSV...')">Exportar Dados</button>
+
+        <button class="btn-acao" style="background:var(--waze-dark); color:white; font-size:0.8rem; margin-top:20px;" onclick="alert('Gerando CSV...')">Exportar Dados</button>
     </div>
 </div>
 
@@ -143,20 +176,33 @@
 
     function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display = 'flex'; }
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
+    
     function validarAcesso() { 
         if(document.getElementById('senha-adm').value === '290519') { 
             fecharModais(); 
             document.getElementById('modal-acesso-master').style.display = 'flex'; 
-            carregarStats();
+            carregarBI();
         } else { alert("Senha incorreta!"); }
     }
 
-    function carregarStats() {
+    function carregarBI() {
         db.ref('vagas_sp').once('value', snap => {
             const data = snap.val(); if(!data) return;
             const entries = Object.values(data);
-            document.getElementById('master-total').innerText = entries.length;
-            document.getElementById('master-cliques').innerText = entries.reduce((acc, v) => acc + (v.cliques || 0), 0);
+            
+            // Cálculos para os Cards
+            const totalPosts = entries.length;
+            const totalVagasSomadas = entries.reduce((acc, v) => acc + (v.qtd || 0), 0);
+            const totalCliques = entries.reduce((acc, v) => acc + (v.cliques || 0), 0);
+            const zaSim = entries.filter(v => v.zona_azul === 'Sim').length;
+            const zaNao = entries.filter(v => v.zona_azul === 'Não').length;
+
+            // Atribuição nos Cards
+            document.getElementById('m-posts').innerText = totalPosts;
+            document.getElementById('m-vagas-total').innerText = totalVagasSomadas;
+            document.getElementById('m-cliques').innerText = totalCliques;
+            document.getElementById('m-za-sim').innerText = zaSim;
+            document.getElementById('m-za-nao').innerText = zaNao;
         });
     }
 
@@ -202,11 +248,9 @@
 
     function renderHeatmap() {
         mapCal = new google.maps.Map(document.getElementById("mapa-calor"), { zoom: 15, center: userLoc, disableDefaultUI: true, styles: wazeStyle });
-        
         db.ref('vagas_sp').on('value', snap => {
             const data = snap.val(); if(!data) return;
             const points = [];
-            
             Object.keys(data).forEach(id => {
                 const v = data[id];
                 points.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
@@ -233,17 +277,13 @@
             });
 
             if(heatmap) heatmap.setMap(null);
-            
-            // GRADIENTE SINCRONIZADO COM A LEGENDA
             heatmap = new google.maps.visualization.HeatmapLayer({ 
-                data: points, 
-                map: mapCal, 
-                radius: 45,
+                data: points, map: mapCal, radius: 45,
                 gradient: [
                     'rgba(0, 255, 255, 0)',
-                    'rgba(239, 68, 68, 1)',   /* Vermelho (Poucas) */
-                    'rgba(245, 158, 11, 1)',  /* Laranja (5-10) */
-                    'rgba(16, 185, 129, 1)'   /* Verde Waze (Mais de 10) */
+                    'rgba(239, 68, 68, 1)',
+                    'rgba(245, 158, 11, 1)',
+                    'rgba(16, 185, 129, 1)'
                 ]
             });
         });

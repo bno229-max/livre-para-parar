@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pode Parar Aqui</title>
+    <title>Pode Parar Aqui - v7.4</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#33ccff">
@@ -48,7 +48,7 @@
         }
         .btn-acao:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--waze-dark); }
         .btn-indicar { background: var(--verde-waze); color: white; margin-top: 25px; }
-        .btn-vamos { background: var(--waze-blue); color: white; margin-top: 10px; border: 2px solid var(--waze-dark); box-shadow: 0 4px 0px var(--waze-dark); }
+        .btn-vamos { background: var(--waze-blue); color: white; margin-top: 10px; border: 2px solid var(--waze-dark); box-shadow: 0 4px 0px var(--waze-dark); height: auto; padding: 10px; }
         .btn-buscar { background: var(--amarelo-laranja); color: white; margin-top: 10px; padding: 12px; font-size: 0.8rem; }
 
         .zona-azul-container { display: flex; gap: 15px; margin-top: 10px; }
@@ -68,7 +68,8 @@
         .desc-adm { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; color: #64748b; margin-top: 5px; display: block; }
         
         .lista-detalhada { margin-top: 15px; background: white; border-radius: 20px; border: 3px solid var(--waze-dark); overflow: hidden; }
-        .rua-item { padding: 12px; border-bottom: 2px solid #f0f3f6; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
+        .rua-item { padding: 15px; border-bottom: 2px solid #f0f3f6; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .rua-item:active { background: #f1f5f9; }
 
         .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; margin-bottom: 10px; }
         .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: white; text-align: center; }
@@ -107,7 +108,7 @@
 
 <div id="modal-detalhes" class="modal-overlay">
     <div class="master-card" style="background: white;">
-        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem; text-transform: uppercase; color: var(--waze-blue);">LISTA</h3>
+        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem; text-transform: uppercase; color: var(--waze-blue);">AUDITORIA</h3>
         <div id="lista-detalhada-container" class="lista-detalhada"></div>
         <button class="btn-acao" style="margin-top: 15px; background: var(--waze-dark); color:white; padding: 12px;" onclick="document.getElementById('modal-detalhes').style.display='none'">VOLTAR</button>
     </div>
@@ -198,10 +199,8 @@
             zona_azul: document.querySelector('input[name="za"]:checked').value, 
             lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 
         });
-        
         contadorVagas++;
         localStorage.setItem('vagas_contagem', contadorVagas);
-        
         if(contadorVagas % 5 === 0) {
             document.getElementById('msg-conquista').innerText = `Uau! Você já indicou ${contadorVagas} vagas no total!`;
             document.getElementById('modal-engajamento').style.display = 'flex';
@@ -213,10 +212,7 @@
         const endereco = document.getElementById('input-destino').value;
         if(!endereco) return alert("Digite o endereço!");
         geocoder.geocode({ address: endereco }, (results, status) => {
-            if (status === "OK") {
-                mapCal.setCenter(results[0].geometry.location);
-                mapCal.setZoom(17);
-            }
+            if (status === "OK") { mapCal.setCenter(results[0].geometry.location); mapCal.setZoom(17); }
         });
     }
 
@@ -235,10 +231,9 @@
                 marker.addListener("click", () => {
                     const dt = new Date(v.ts);
                     const dh = `${dt.toLocaleDateString('pt-BR')} às ${dt.getHours().toString().padStart(2,'0')}:${dt.getMinutes().toString().padStart(2,'0')}`;
-                    const za = v.zona_azul === 'Sim' ? '🔴 ZONA AZUL' : '🟢 LIVRE';
                     infoWindow.setContent(`
                         <div style="text-align:center; padding:5px; font-family:sans-serif;">
-                            <b>${v.tipo}</b><br><small>${za}</small><br>
+                            <b>${v.tipo}</b><br><small>${v.zona_azul === 'Sim' ? '🔴 ZONA AZUL' : '🟢 LIVRE'}</small><br>
                             <span style="font-weight:900; color:var(--verde-waze); font-size:1.1rem;">${v.qtd} VAGAS</span><br>
                             <small style="color:#666">Atualizado: ${dh}</small><br>
                             <button onclick="ir('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS!</button>
@@ -265,6 +260,14 @@
         } else { alert("Senha incorreta!"); }
     }
 
+    function obterEndereco(lat, lng, callback) {
+        geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+            if (status === "OK" && results[0]) {
+                callback(results[0].formatted_address.split(',')[0] + ', ' + results[0].formatted_address.split(',')[1]);
+            } else { callback("Rua não identificada"); }
+        });
+    }
+
     function carregarBI() {
         const totalVagas = dadosGlobais.reduce((acc, v) => acc + (v.qtd || 0), 0);
         const cliques = dadosGlobais.reduce((acc, v) => acc + (v.cliques || 0), 0);
@@ -280,13 +283,35 @@
     }
 
     function abrirLista(tipo) {
-        const container = document.getElementById('lista-detalhada-container'); container.innerHTML = "";
+        const container = document.getElementById('lista-detalhada-container');
+        container.innerHTML = "<p style='text-align:center; padding:20px; font-weight:800;'>Buscando endereços...</p>";
         const filtrados = tipo === 'Geral' ? dadosGlobais : dadosGlobais.filter(v => v.zona_azul === tipo);
-        document.getElementById('detalhe-titulo').innerText = `LISTA: ${tipo}`;
-        filtrados.slice().reverse().forEach(v => {
-            container.innerHTML += `<div class="rua-item"><div><b>${v.tipo}</b><br><small>${new Date(v.ts).toLocaleString('pt-BR')}</small></div><span style="font-weight:900; color:var(--verde-waze);">${v.qtd} Vagas</span></div>`;
-        });
+        document.getElementById('detalhe-titulo').innerText = `Auditoria: ${tipo}`;
         document.getElementById('modal-detalhes').style.display = 'flex';
+
+        let htmlFinal = "";
+        let promessas = filtrados.slice().reverse().map(v => {
+            return new Promise((resolve) => {
+                obterEndereco(v.lat, v.lng, (rua) => {
+                    htmlFinal += `
+                        <div class="rua-item" onclick="focarNoMapa(${v.lat}, ${v.lng})">
+                            <div style="flex:1"><b>${rua}</b><br><small>${v.tipo} • ${new Date(v.ts).toLocaleTimeString()}</small></div>
+                            <div style="text-align:right"><span style="font-weight:900; color:var(--verde-waze);">${v.qtd} vgs</span><br><small style="color:var(--waze-blue); font-size:0.5rem">VER MAPA</small></div>
+                        </div>`;
+                    resolve();
+                });
+            });
+        });
+
+        Promise.all(promessas).then(() => {
+            container.innerHTML = htmlFinal || "<p style='padding:20px; text-align:center;'>Vazio.</p>";
+        });
+    }
+
+    window.focarNoMapa = function(lat, lng) {
+        fecharModais();
+        switchTab('calor');
+        setTimeout(() => { mapCal.setCenter({lat, lng}); mapCal.setZoom(19); }, 400);
     }
     
     window.onload = start;

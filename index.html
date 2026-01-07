@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP - v6.2</title>
+    <title>Livre Parar SP - v6.3</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -19,6 +19,7 @@
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
+        /* Navegação */
         .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: 0.2s; text-transform: uppercase; }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
@@ -27,6 +28,7 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
+        /* Cards Principais */
         .card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.05); }
         .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; }
         #mini-mapa { height: 200px; margin-bottom: 15px; }
@@ -35,36 +37,78 @@
         label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
         select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
+        /* BOTOES COM EFEITO ORIGINAL */
         .btn-acao { 
             width: 100%; border: 3px solid var(--waze-dark); padding: 18px; border-radius: 50px; 
             font-weight: 900; cursor: pointer; font-size: 1rem; transition: all 0.1s; 
             box-shadow: 0 6px 0px var(--waze-dark); text-transform: uppercase;
         }
+        .btn-acao:hover { transform: translateY(-2px); box-shadow: 0 8px 0px var(--waze-dark); }
+        .btn-acao:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--waze-dark); }
+        
         .btn-indicar { background: var(--verde-waze); color: white; margin-top: 25px; }
-        .btn-vamos { background: var(--waze-blue); color: white; margin-top: 10px; width: 100%; }
+        .btn-vamos { background: var(--waze-blue); color: white; margin-top: 10px; box-shadow: 0 4px 0px var(--waze-dark); }
 
         .zona-azul-container { display: flex; gap: 15px; margin-top: 10px; }
         .radio-item { flex: 1; background: #f1f5f9; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); text-align: center; font-weight: 800; cursor: pointer; }
-        .radio-item:has(input:checked) { background: var(--waze-blue); color: white; }
+        .radio-item:has(input:checked) { background: var(--waze-blue); color: white; transform: scale(1.05); }
         .radio-item input { display: none; }
 
         .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; }
         .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: white; text-align: center; }
 
-        /* Estilo InfoWindow */
-        .info-balao { text-align: center; padding: 5px; min-width: 160px; }
-        .tag-za { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 0.6rem; font-weight: 800; margin-bottom: 5px; border: 1px solid #000; }
+        .footer-adm { text-align: center; padding: 30px; opacity: 0.2; }
+        .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; }
 
-        /* ADM Styles */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .master-card { background: #f0f3f6; width: 90%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 20px; box-shadow: 10px 10px 0px var(--waze-dark); max-height: 80vh; overflow-y: auto; }
-        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 10px; border-radius: 15px; text-align: center; cursor: pointer; margin-bottom: 10px; }
+        /* DASHBOARD MASTER ORIGINAL */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 20px; box-sizing: border-box; }
+        .master-card { background: #f0f3f6; width: 100%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); max-height: 90vh; overflow-y: auto; }
+        
+        .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 10px; border-radius: 15px; text-align: center; cursor: pointer; }
+        .valor-adm { display: block; font-size: 1.4rem; font-weight: 900; color: var(--waze-blue); line-height: 1; }
+        .desc-adm { font-size: 0.5rem; font-weight: 800; text-transform: uppercase; color: #64748b; margin-top: 3px; display: block; }
+
+        .lista-ruas { margin-top: 15px; background: white; border-radius: 20px; border: 3px solid var(--waze-dark); padding: 10px; max-height: 300px; overflow-y: auto; }
+        .rua-item { padding: 10px; border-bottom: 1px solid #eee; font-size: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+
+        .info-balao { text-align: center; padding: 5px; min-width: 180px; font-family: 'Open Sans', sans-serif; }
     </style>
 </head>
 <body>
 
-<div id="modal-login-adm" class="modal-overlay"><div class="master-card" style="text-align: center; background: white;"><h2>🔒 Terminal Master</h2><input type="password" id="senha-adm" placeholder="Senha"><button class="btn-acao btn-indicar" onclick="validarAcesso()">Entrar</button></div></div>
-<div id="modal-acesso-master" class="modal-overlay"><div class="master-card"><div style="display:flex; justify-content:space-between;"><h3>BI v6.2</h3><button onclick="fecharModais()">X</button></div><div id="status-vagas"></div></div></div>
+<div id="modal-login-adm" class="modal-overlay">
+    <div class="master-card" style="text-align: center; background: white;">
+        <h2 style="margin-bottom: 20px;">🔒 Terminal Master</h2>
+        <input type="password" id="senha-adm" placeholder="Senha de Acesso" style="text-align: center;">
+        <button class="btn-acao btn-indicar" onclick="validarAcesso()">Entrar</button>
+        <p onclick="fecharModais()" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; cursor:pointer;">VOLTAR</p>
+    </div>
+</div>
+
+<div id="modal-detalhes" class="modal-overlay">
+    <div class="master-card" style="background: white;">
+        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem; text-transform: uppercase;">RUAS</h3>
+        <div id="lista-detalhada" class="lista-ruas"></div>
+        <button class="btn-acao" style="margin-top: 15px; background: var(--waze-dark); color:white; padding: 12px;" onclick="document.getElementById('modal-detalhes').style.display='none'">VOLTAR</button>
+    </div>
+</div>
+
+<div id="modal-acesso-master" class="modal-overlay">
+    <div class="master-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0; font-weight: 900;">DASHBOARD BI</h3>
+            <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:10px; font-weight:800; cursor:pointer; font-size:0.6rem;">FECHAR</button>
+        </div>
+        <div class="grid-master">
+            <div class="mini-card-adm" style="grid-column: span 2; background: #e0f2fe; cursor: default;"><span class="valor-adm" id="m-vagas-total">0</span><span class="desc-adm">Soma Geral de Vagas</span></div>
+            <div class="mini-card-adm" onclick="abrirLista('Geral')"><span class="valor-adm" id="m-posts">0</span><span class="desc-adm">Total Indicações</span></div>
+            <div class="mini-card-adm" style="cursor: default;"><span class="valor-adm" id="m-cliques" style="color: var(--amarelo-laranja);">0</span><span class="desc-adm">Cliques "Vamos Lá"</span></div>
+            <div class="mini-card-adm" onclick="abrirLista('Sim')" style="border-bottom: 5px solid var(--waze-blue);"><span class="valor-adm" id="m-za-sim" style="color: var(--waze-blue);">0</span><span class="desc-adm">Zona Azul (Sim)</span></div>
+            <div class="mini-card-adm" onclick="abrirLista('Não')" style="border-bottom: 5px solid var(--waze-dark);"><span class="valor-adm" id="m-za-nao">0</span><span class="desc-adm">Zona Azul (Não)</span></div>
+        </div>
+    </div>
+</div>
 
 <nav class="nav">
     <div class="tab active" onclick="switchTab('registrar')">Indicar Vagas</div>
@@ -73,8 +117,9 @@
 
 <div id="view-registrar" class="view active">
     <div class="card">
-        <label>📍 Localização</label>
+        <label style="margin-top:0;">📍 Sua Localização</label>
         <div id="mini-mapa" class="map-box"></div>
+        
         <label>Tipo de Via</label>
         <select id="tipo_via">
             <option value="Rua Residencial">🏠 Rua Residencial</option>
@@ -82,16 +127,19 @@
             <option value="Praça">🌳 Praça</option>
             <option value="Estacionamento">🅿️ Estacionamento</option>
         </select>
+
         <label>Quantidade de Vagas</label>
-        <input type="number" id="qtd" placeholder="Ex: 8">
-        <label>Zona Azul?</label>
+        <input type="number" id="qtd" placeholder="Ex: 8" inputmode="numeric">
+
+        <label>Precisa de zona azul?</label>
         <div class="zona-azul-container">
             <label class="radio-item"><input type="radio" name="za" value="Sim"> SIM</label>
             <label class="radio-item"><input type="radio" name="za" value="Não" checked> NÃO</label>
         </div>
+
         <button class="btn-acao btn-indicar" onclick="salvarVaga()">Pode parar aqui</button>
     </div>
-    <div style="text-align:center; opacity:0.3" onclick="abrirLoginAdm()">ADM</div>
+    <div class="footer-adm"><span class="link-adm" onclick="abrirLoginAdm()">ADM</span></div>
 </div>
 
 <div id="view-calor" class="view">
@@ -100,7 +148,7 @@
         <div class="legenda">
             <div class="legenda-item" style="background:var(--verde-waze)">MAIS DE 10</div>
             <div class="legenda-item" style="background:var(--amarelo-laranja)">5 A 10</div>
-            <div class="legenda-item" style="background:var(--vermelho)">ATÉ 4</div>
+            <div class="legenda-item" style="background:var(--vermelho)">POUCAS</div>
         </div>
     </div>
 </div>
@@ -109,7 +157,7 @@
     const firebaseConfig = { apiKey: "AIzaSyCv33-vr99tYWdxdeJP4rsp39ro5M2gZNo", authDomain: "olhar-urbano.firebaseapp.com", databaseURL: "https://olhar-urbano-default-rtdb.firebaseio.com", projectId: "olhar-urbano" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let userLoc = { lat: -23.5505, lng: -46.6333 }, mapReg, mapCal, infoWindow, heatmap;
+    let userLoc = { lat: -23.5505, lng: -46.6333 }, mapReg, mapCal, infoWindow, heatmap, dadosGlobais = [];
 
     function start() {
         const s = document.createElement('script');
@@ -121,10 +169,12 @@
         infoWindow = new google.maps.InfoWindow();
         navigator.geolocation.getCurrentPosition(p => {
             userLoc = { lat: p.coords.latitude, lng: p.coords.longitude };
-            mapReg = new google.maps.Map(document.getElementById("mini-mapa"), { zoom: 17, center: userLoc, disableDefaultUI: true });
+            mapReg = new google.maps.Map(document.getElementById("mini-mapa"), { zoom: 17, center: userLoc, disableDefaultUI: true, styles: wazeStyle });
             new google.maps.Marker({ position: userLoc, map: mapReg });
         });
     };
+
+    const wazeStyle = [{"featureType":"landscape","stylers":[{"color":"#f0f3f6"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"#ffffff"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#fffbc2"}]}];
 
     function switchTab(t) {
         document.querySelectorAll('.tab, .view').forEach(e => e.classList.remove('active'));
@@ -134,58 +184,84 @@
 
     function salvarVaga() {
         const q = document.getElementById('qtd').value;
-        if(!q) return alert("Informe as vagas!");
+        if(!q) return alert("Quantas vagas?");
         db.ref('vagas_sp').push({ qtd: parseInt(q), tipo: document.getElementById('tipo_via').value, zona_azul: document.querySelector('input[name="za"]:checked').value, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 });
-        alert("Enviado!");
+        alert("Obrigado!"); document.getElementById('qtd').value = "";
     }
 
     function renderHeatmap() {
-        mapCal = new google.maps.Map(document.getElementById("mapa-calor"), { zoom: 15, center: userLoc, disableDefaultUI: true });
+        mapCal = new google.maps.Map(document.getElementById("mapa-calor"), { zoom: 15, center: userLoc, disableDefaultUI: true, styles: wazeStyle });
         db.ref('vagas_sp').on('value', snap => {
             const data = snap.val(); if(!data) return;
             const points = [];
+            dadosGlobais = Object.values(data);
+            
             Object.keys(data).forEach(id => {
                 const v = data[id];
                 points.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
                 
-                // PIN COM COR DINÂMICA
-                let cor = v.qtd > 10 ? 'green' : (v.qtd >= 5 ? 'orange' : 'red');
-                const marker = new google.maps.Marker({
+                // VOLTA AO PIN ORIGINAL 📍
+                const m = new google.maps.Marker({
                     position: {lat: v.lat, lng: v.lng},
                     map: mapCal,
-                    icon: `http://maps.google.com/mapfiles/ms/icons/${cor}-dot.png`
+                    label: { text: "📍", fontSize: "24px" },
+                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 0 }
                 });
 
-                marker.addListener("click", () => {
+                m.addListener("click", () => {
                     const dt = new Date(v.ts);
-                    const hora = `${dt.getHours()}:${dt.getMinutes().toString().padStart(2,'0')}`;
-                    const bgZA = v.zona_azul === 'Sim' ? '#fee2e2' : '#dcfce7';
-                    const txtZA = v.zona_azul === 'Sim' ? 'ZONA AZUL' : 'LIVRE';
+                    const hora = `${dt.getDate().toString().padStart(2,'0')}/${(dt.getMonth()+1).toString().padStart(2,'0')} às ${dt.getHours().toString().padStart(2,'0')}:${dt.getMinutes().toString().padStart(2,'0')}`;
+                    const zaTxt = v.zona_azul === 'Sim' ? '🔴 PRECISA ZONA AZUL' : '🟢 LIVRE DE ZONA AZUL';
 
                     infoWindow.setContent(`
                         <div class="info-balao">
-                            <span class="tag-za" style="background:${bgZA}">${txtZA}</span><br>
-                            <b>${v.tipo}</b><br>
-                            <span style="font-size:1.1rem; color:var(--verde-waze); font-weight:900;">${v.qtd} VAGAS</span><br>
-                            <small>Postado às ${hora}</small><br>
+                            <b style="text-transform:uppercase; font-size:1rem;">${v.tipo}</b><br>
+                            <span style="font-weight:800; font-size:0.7rem;">${zaTxt}</span><br>
+                            <span style="font-weight:900; color:var(--verde-waze); font-size:1.1rem;">${v.qtd} VAGAS LIVRES</span><br>
+                            <small style="color:#666">Atualizado: ${hora}</small><br>
                             <button onclick="ir('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS LÁ!</button>
                         </div>`);
-                    infoWindow.open(mapCal, marker);
+                    infoWindow.open(mapCal, m);
                 });
             });
             if(heatmap) heatmap.setMap(null);
-            heatmap = new google.maps.visualization.HeatmapLayer({ data: points, map: mapCal, radius: 40 });
+            heatmap = new google.maps.visualization.HeatmapLayer({ data: points, map: mapCal, radius: 45 });
         });
     }
 
     window.ir = function(id, lat, lng) {
         db.ref('vagas_sp/'+id+'/cliques').transaction(c => (c||0)+1);
-        window.open(`https://www.google.com/maps?q=${lat},${lng}`);
+        window.open(`http://googleusercontent.com/maps.google.com/3{lat},${lng}`);
     }
 
+    // FUNÇÕES ADM
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
     function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display='flex'; }
-    function validarAcesso() { if(document.getElementById('senha-adm').value === '290519') { fecharModais(); document.getElementById('modal-acesso-master').style.display='flex'; }}
+    function validarAcesso() { 
+        if(document.getElementById('senha-adm').value === '290519') { 
+            fecharModais(); 
+            document.getElementById('modal-acesso-master').style.display='flex'; 
+            carregarBI();
+        } else { alert("Erro!"); }
+    }
+
+    function carregarBI() {
+        document.getElementById('m-posts').innerText = dadosGlobais.length;
+        document.getElementById('m-vagas-total').innerText = dadosGlobais.reduce((acc, v) => acc + (v.qtd || 0), 0);
+        document.getElementById('m-cliques').innerText = dadosGlobais.reduce((acc, v) => acc + (v.cliques || 0), 0);
+        document.getElementById('m-za-sim').innerText = dadosGlobais.filter(v => v.zona_azul === 'Sim').length;
+        document.getElementById('m-za-nao').innerText = dadosGlobais.filter(v => v.zona_azul === 'Não').length;
+    }
+
+    function abrirLista(tipo) {
+        const container = document.getElementById('lista-detalhada');
+        container.innerHTML = "";
+        const filtrados = tipo === 'Geral' ? dadosGlobais : dadosGlobais.filter(v => v.zona_azul === tipo);
+        filtrados.reverse().forEach(v => {
+            container.innerHTML += `<div class="rua-item"><div><b>${v.tipo}</b><br><small>Vagas: ${v.qtd}</small></div><span>${new Date(v.ts).getHours()}:${new Date(v.ts).getMinutes().toString().padStart(2,'0')}</span></div>`;
+        });
+        document.getElementById('modal-detalhes').style.display = 'flex';
+    }
     
     window.onload = start;
 </script>

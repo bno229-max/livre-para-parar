@@ -15,19 +15,17 @@
             --verde-waze: #10b981; 
             --amarelo: #f59e0b; 
             --vermelho: #ef4444; 
-            --dourado-vip: #ffdf00;
         }
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
-        /* Navegação */
         .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: all 0.2s ease; text-transform: uppercase; }
+        .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: 0.2s; text-transform: uppercase; }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
 
-        .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s ease-out; }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.05); }
         .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; }
@@ -35,40 +33,33 @@
         #mapa-calor { height: 480px; }
 
         label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
-        select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; transition: 0.2s; }
-        select:focus, input:focus { border-color: var(--waze-blue); }
+        select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
-        /* Botoes com Efeitos Restaurados */
-        .btn-indicar { 
-            width: 100%; background: var(--verde-waze); color: white; border: 3px solid var(--waze-dark); 
-            padding: 18px; border-radius: 50px; font-weight: 900; cursor: pointer; margin-top: 25px; 
-            font-size: 1.1rem; transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        /* Botão Padrão com Sombra e Efeitos */
+        .btn-acao { 
+            width: 100%; border: 3px solid var(--waze-dark); padding: 18px; border-radius: 50px; 
+            font-weight: 900; cursor: pointer; font-size: 1rem; transition: all 0.1s; 
             box-shadow: 0 6px 0px var(--waze-dark); text-transform: uppercase;
         }
-        .btn-indicar:hover { transform: translateY(-2px); box-shadow: 0 8px 0px var(--waze-dark); }
-        .btn-indicar:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--waze-dark); }
+        .btn-acao:hover { transform: translateY(-2px); box-shadow: 0 8px 0px var(--waze-dark); }
+        .btn-acao:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--waze-dark); }
+
+        .btn-indicar { background: var(--verde-waze); color: white; margin-top: 25px; }
+        .btn-vamos { background: var(--waze-blue); color: white; margin-top: 10px; }
 
         .zona-azul-container { display: flex; gap: 15px; margin-top: 10px; }
         .radio-item { flex: 1; background: #f1f5f9; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); text-align: center; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        .radio-item:hover { background: #e2e8f0; }
         .radio-item:has(input:checked) { background: var(--waze-blue); color: white; transform: scale(1.05); }
         .radio-item input { display: none; }
 
-        /* Legendas Restauradas */
         .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; }
-        .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: var(--waze-dark); text-align: center; text-transform: uppercase; }
+        .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: var(--waze-dark); text-align: center; }
 
-        .footer-adm { text-align: center; padding: 30px; opacity: 0.3; transition: 0.5s; }
-        .footer-adm:hover { opacity: 1; }
+        .footer-adm { text-align: center; padding: 30px; opacity: 0.2; }
         .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; }
 
-        /* Modal Master */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 20px; box-sizing: border-box; }
         .master-card { background: #fff; width: 100%; max-width: 400px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); }
-        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-item { background: #f8fafc; border: 2px solid var(--waze-dark); padding: 10px; border-radius: 15px; text-align: center; }
-        .stat-num { display: block; font-size: 1.4rem; font-weight: 900; color: var(--waze-blue); }
-        .stat-desc { font-size: 0.5rem; font-weight: 800; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -77,7 +68,7 @@
     <div class="master-card" style="text-align: center;">
         <h2 style="margin-bottom: 20px;">🔒 Terminal Master</h2>
         <input type="password" id="senha-adm" placeholder="Senha de Acesso" style="text-align: center;">
-        <button class="btn-indicar" onclick="validarAcesso()">Entrar</button>
+        <button class="btn-acao btn-indicar" onclick="validarAcesso()">Entrar</button>
         <p onclick="fecharModais()" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; cursor:pointer;">VOLTAR</p>
     </div>
 </div>
@@ -85,16 +76,14 @@
 <div id="modal-acesso-master" class="modal-overlay">
     <div class="master-card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0; color:var(--waze-blue);">BI DASHBOARD</h3>
+            <h3 style="margin:0; color:var(--waze-blue);">ACESSO MASTER</h3>
             <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:8px; font-weight:800; cursor:pointer; font-size:0.6rem;">SAIR</button>
         </div>
-        <div class="grid-stats">
-            <div class="stat-item"><span class="stat-num" id="stat-total">0</span><span class="stat-desc">Indicações</span></div>
-            <div class="stat-item"><span class="stat-num" id="stat-curtidas">0</span><span class="stat-desc">Curtidas</span></div>
-            <div class="stat-item"><span class="stat-num" id="stat-confia">0%</span><span class="stat-desc">Confiança</span></div>
-            <div class="stat-item"><span class="stat-num" id="stat-hoje">0</span><span class="stat-desc">Hoje</span></div>
+        <div id="stats-master" style="font-size: 0.8rem; font-weight: 700;">
+            <p>Indicações Totais: <span id="master-total" style="color:var(--waze-blue)">0</span></p>
+            <p>Cliques em 'VAMOS LÁ': <span id="master-cliques" style="color:var(--verde-waze)">0</span></p>
         </div>
-        <button class="btn-indicar" style="background:var(--waze-dark); font-size:0.8rem; margin-top:15px;" onclick="alert('Exportando...')">RELATÓRIO CET</button>
+        <button class="btn-acao" style="background:var(--waze-dark); color:white; font-size:0.8rem;" onclick="alert('Exportando base...')">Exportar Dados</button>
     </div>
 </div>
 
@@ -125,7 +114,7 @@
             <label class="radio-item"><input type="radio" name="za" value="Não" checked> NÃO</label>
         </div>
 
-        <button class="btn-indicar" onclick="salvarVaga()">Pode parar aqui</button>
+        <button class="btn-acao btn-indicar" onclick="salvarVaga()">Pode parar aqui</button>
     </div>
     <div class="footer-adm"><span class="link-adm" onclick="abrirLoginAdm()">ADM</span></div>
 </div>
@@ -134,9 +123,9 @@
     <div class="card" style="padding: 10px;">
         <div id="mapa-calor" class="map-box"></div>
         <div class="legenda">
-            <div class="legenda-item" style="background:var(--verde-waze)">+10 VAGAS</div>
-            <div class="legenda-item" style="background:var(--amarelo)">5-10 VAGAS</div>
-            <div class="legenda-item" style="background:var(--vermelho)">POUCAS</div>
+            <div class="legenda-item" style="background:var(--verde-waze); color:white;">MAIS DE 10</div>
+            <div class="legenda-item" style="background:var(--amarelo); color:white;">5 A 10</div>
+            <div class="legenda-item" style="background:var(--vermelho); color:white;">POUCAS</div>
         </div>
     </div>
 </div>
@@ -155,17 +144,20 @@
 
     function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display = 'flex'; }
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
-    function validarAcesso() { if(document.getElementById('senha-adm').value === '290519') { fecharModais(); document.getElementById('modal-acesso-master').style.display = 'flex'; carregarBI(); } else { alert("Senha incorreta!"); }}
+    function validarAcesso() { 
+        if(document.getElementById('senha-adm').value === '290519') { 
+            fecharModais(); 
+            document.getElementById('modal-acesso-master').style.display = 'flex'; 
+            carregarStats();
+        } else { alert("Senha incorreta!"); }
+    }
 
-    function carregarBI() {
+    function carregarStats() {
         db.ref('vagas_sp').once('value', snap => {
             const data = snap.val(); if(!data) return;
             const entries = Object.values(data);
-            const totalLikes = entries.reduce((acc, v) => acc + (v.curtidas || 0), 0);
-            document.getElementById('stat-total').innerText = entries.length;
-            document.getElementById('stat-curtidas').innerText = totalLikes;
-            document.getElementById('stat-confia').innerText = Math.min(100, Math.round((totalLikes/entries.length)*25)) + "%";
-            document.getElementById('stat-hoje').innerText = entries.filter(v => new Date(v.ts).toDateString() === new Date().toDateString()).length;
+            document.getElementById('master-total').innerText = entries.length;
+            document.getElementById('master-cliques').innerText = entries.reduce((acc, v) => acc + (v.cliques || 0), 0);
         });
     }
 
@@ -192,23 +184,21 @@
         else { document.querySelectorAll('.tab')[1].classList.add('active'); document.getElementById('view-calor').classList.add('active'); setTimeout(renderHeatmap, 200); }
     }
 
-    async function salvarVaga() {
+    function salvarVaga() {
         const qtd = document.getElementById('qtd').value;
         if(!qtd) return alert("Quantas vagas você viu?");
-        const btn = document.querySelector('.btn-indicar');
-        btn.innerText = "ENVIADO! ✨";
-        btn.style.background = "var(--amarelo)";
-        db.ref('vagas_sp').push({ qtd: parseInt(qtd), tipo: document.getElementById('tipo_via').value, zona_azul: document.querySelector('input[name="za"]:checked').value, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), curtidas: 0 });
-        setTimeout(() => { 
-            btn.innerText = "Pode parar aqui"; 
-            btn.style.background = "var(--verde-waze)";
-            document.getElementById('qtd').value = ""; 
-            alert("Obrigado por ajudar!"); 
-        }, 800);
+        db.ref('vagas_sp').push({ 
+            qtd: parseInt(qtd), tipo: document.getElementById('tipo_via').value, 
+            zona_azul: document.querySelector('input[name="za"]:checked').value, 
+            lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 
+        });
+        alert("Obrigado por ajudar a comunidade!");
+        document.getElementById('qtd').value = "";
     }
 
-    window.curtirVaga = function(id) {
-        db.ref('vagas_sp/' + id + '/curtidas').transaction(c => (c || 0) + 1, (err) => { if(!err) { alert("Vaga confirmada! 👍"); infoWindow.close(); }});
+    window.registrarIrAteLa = function(id, lat, lng) {
+        db.ref('vagas_sp/' + id + '/cliques').transaction(c => (c || 0) + 1);
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
     }
 
     function renderHeatmap() {
@@ -220,23 +210,23 @@
                 const v = data[id];
                 points.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
                 
-                let cor = v.qtd > 10 ? 'var(--verde-waze)' : (v.qtd >= 5 ? 'var(--amarelo)' : 'var(--vermelho)');
-                if((v.curtidas || 0) >= 5) cor = 'var(--dourado-vip)';
-
+                // Pin Profissional 📍
                 const m = new google.maps.Marker({ 
                     position: {lat:v.lat, lng:v.lng}, map: mapCal, 
-                    icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: cor, fillOpacity: 1, scale: 11, strokeColor: '#222', strokeWeight: 2 }
+                    label: { text: "📍", fontSize: v.cliques > 10 ? "24px" : "18px" },
+                    icon: { path: google.maps.SymbolPath.CIRCLE, fillOpacity: 0, strokeOpacity: 0 } // Esconde o circulo padrao
                 });
 
                 m.addListener("click", () => {
-                    const dt = new Date(v.ts).toLocaleString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+                    const dataObj = new Date(v.ts);
+                    const formatada = `${dataObj.getDate().toString().padStart(2,'0')}/${(dataObj.getMonth()+1).toString().padStart(2,'0')} às ${dataObj.getHours().toString().padStart(2,'0')}:${dataObj.getMinutes().toString().padStart(2,'0')}`;
+                    
                     infoWindow.setContent(`
-                        <div style="text-align:center; padding:5px; font-family:sans-serif;">
-                            <b style="font-size:1.1rem;">${v.tipo}</b><br>
-                            <span style="font-weight:900; color:var(--verde-waze);">${v.qtd} VAGAS LIVRES</span><br>
-                            <small>Indicado às: ${dt}</small><br>
-                            <button onclick="curtirVaga('${id}')" style="margin-top:10px; width:100%; padding:10px; border-radius:12px; border:2px solid #222; font-weight:900; cursor:pointer; background:#f8fafc;">👍 VAGA REAL (${v.curtidas || 0})</button>
-                            <button onclick="window.open('https://www.google.com/maps?q=${v.lat},${v.lng}')" style="margin-top:8px; width:100%; padding:10px; background:var(--waze-blue); color:white; border:none; border-radius:12px; font-weight:900; cursor:pointer;">IR ATÉ LÁ</button>
+                        <div style="text-align:center; padding:10px; font-family:sans-serif;">
+                            <b style="font-size:1.1rem; text-transform:uppercase;">${v.tipo}</b><br>
+                            <span style="font-weight:900; color:var(--verde-waze); font-size:1.2rem;">${v.qtd} VAGAS LIVRES</span><br>
+                            <small style="color:#666">Postado em: ${formatada}</small><br>
+                            <button onclick="registrarIrAteLa('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS LÁ!</button>
                         </div>`);
                     infoWindow.open(mapCal, m);
                 });

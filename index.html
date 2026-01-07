@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP - Dashboard Master</title>
+    <title>Livre Parar SP - BI Avançado</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -19,7 +19,6 @@
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
-        /* Navegação */
         .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: 0.2s; text-transform: uppercase; }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
@@ -32,10 +31,6 @@
         .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; }
         #mini-mapa { height: 200px; margin-bottom: 15px; }
         #mapa-calor { height: 480px; }
-
-        /* Inputs e Labels */
-        label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
-        select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
         .btn-acao { 
             width: 100%; border: 3px solid var(--waze-dark); padding: 18px; border-radius: 50px; 
@@ -63,11 +58,20 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 20px; box-sizing: border-box; }
         .master-card { background: #f0f3f6; width: 100%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); max-height: 90vh; overflow-y: auto; }
         
-        .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 12px; border-radius: 20px; text-align: center; box-shadow: 4px 4px 0px rgba(0,0,0,0.1); }
-        .mini-card-adm.full { grid-column: span 2; }
-        .valor-adm { display: block; font-size: 1.6rem; font-weight: 900; color: var(--waze-blue); line-height: 1; }
-        .desc-adm { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; color: #64748b; margin-top: 5px; display: block; }
+        .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 10px; border-radius: 15px; text-align: center; }
+        .valor-adm { display: block; font-size: 1.4rem; font-weight: 900; color: var(--waze-blue); line-height: 1; }
+        .desc-adm { font-size: 0.5rem; font-weight: 800; text-transform: uppercase; color: #64748b; margin-top: 3px; display: block; }
+
+        /* Card Horário de Pico */
+        .pico-box { background: white; border: 3px solid var(--waze-dark); border-radius: 20px; margin-top: 15px; padding: 15px; }
+        .pico-title { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; display: block; color: var(--vermelho); }
+        .pico-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #cbd5e1; }
+        .pico-item:last-child { border: none; }
+        .pico-hora { font-size: 0.7rem; font-weight: 700; }
+        .pico-barra { flex: 1; height: 12px; background: #f1f5f9; margin: 0 15px; border-radius: 10px; overflow: hidden; position: relative; }
+        .pico-preenchimento { height: 100%; background: var(--waze-blue); transition: 0.5s; }
+        .pico-cliques { font-size: 0.7rem; font-weight: 900; min-width: 25px; text-align: right; }
     </style>
 </head>
 <body>
@@ -83,39 +87,49 @@
 
 <div id="modal-acesso-master" class="modal-overlay">
     <div class="master-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <h3 style="margin:0; color:var(--waze-dark); font-weight: 900;">DASHBOARD BI</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0; font-weight: 900;">DASHBOARD BI</h3>
             <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:10px; font-weight:800; cursor:pointer; font-size:0.6rem;">FECHAR</button>
         </div>
 
         <div class="grid-master">
-            <div class="mini-card-adm full" style="border-color: var(--verde-waze);">
-                <span class="valor-adm" id="m-vagas-total" style="color: var(--verde-waze);">0</span>
-                <span class="desc-adm">Total de Vagas Indicadas (Soma Geral)</span>
+            <div class="mini-card-adm" style="grid-column: span 2; background: #e0f2fe;">
+                <span class="valor-adm" id="m-vagas-total">0</span>
+                <span class="desc-adm">Soma Geral de Vagas Indicadas</span>
             </div>
+            <div class="mini-card-adm"><span class="valor-adm" id="m-posts">0</span><span class="desc-adm">Total Indicações</span></div>
+            <div class="mini-card-adm"><span class="valor-adm" id="m-cliques" style="color: var(--amarelo-laranja);">0</span><span class="desc-adm">Cliques "Vamos Lá"</span></div>
+            <div class="mini-card-adm"><span class="valor-adm" id="m-za-sim" style="color: var(--waze-blue);">0</span><span class="desc-adm">Zona Azul (Sim)</span></div>
+            <div class="mini-card-adm"><span class="valor-adm" id="m-za-nao">0</span><span class="desc-adm">Zona Azul (Não)</span></div>
+        </div>
 
-            <div class="mini-card-adm">
-                <span class="valor-adm" id="m-posts">0</span>
-                <span class="desc-adm">Indicações de Usuários</span>
-            </div>
-
-            <div class="mini-card-adm">
-                <span class="valor-adm" id="m-cliques" style="color: var(--amarelo-laranja);">0</span>
-                <span class="desc-adm">Foram até a vaga (Engajamento)</span>
-            </div>
-
-            <div class="mini-card-adm">
-                <span class="valor-adm" id="m-za-sim" style="color: var(--waze-blue);">0</span>
-                <span class="desc-adm">Precisa de Zona Azul (SIM)</span>
-            </div>
-
-            <div class="mini-card-adm">
-                <span class="valor-adm" id="m-za-nao">0</span>
-                <span class="desc-adm">Precisa de Zona Azul (NÃO)</span>
+        <div class="pico-box">
+            <span class="pico-title">🔥 Pico de Demanda (Horário dos Cliques)</span>
+            <div id="lista-pico">
+                <div class="pico-item">
+                    <span class="pico-hora">06h-12h</span>
+                    <div class="pico-barra"><div class="pico-preenchimento" id="bar-manha" style="width: 0%"></div></div>
+                    <span class="pico-cliques" id="val-manha">0</span>
+                </div>
+                <div class="pico-item">
+                    <span class="pico-hora">12h-18h</span>
+                    <div class="pico-barra"><div class="pico-preenchimento" id="bar-tarde" style="width: 0%; background: var(--amarelo-laranja);"></div></div>
+                    <span class="pico-cliques" id="val-tarde">0</span>
+                </div>
+                <div class="pico-item">
+                    <span class="pico-hora">18h-00h</span>
+                    <div class="pico-barra"><div class="pico-preenchimento" id="bar-noite" style="width: 0%; background: var(--vermelho);"></div></div>
+                    <span class="pico-cliques" id="val-noite">0</span>
+                </div>
+                <div class="pico-item">
+                    <span class="pico-hora">00h-06h</span>
+                    <div class="pico-barra"><div class="pico-preenchimento" id="bar-madruga" style="width: 0%; background: var(--waze-dark);"></div></div>
+                    <span class="pico-cliques" id="val-madruga">0</span>
+                </div>
             </div>
         </div>
 
-        <button class="btn-acao" style="background:var(--waze-dark); color:white; font-size:0.8rem; margin-top:20px;" onclick="alert('Gerando CSV...')">Exportar Dados</button>
+        <button class="btn-acao" style="background:var(--waze-dark); color:white; font-size:0.8rem; margin-top:15px;" onclick="alert('Exportando CSV...')">Exportar Dados</button>
     </div>
 </div>
 
@@ -128,7 +142,6 @@
     <div class="card">
         <label style="margin-top:0;">📍 Sua Localização</label>
         <div id="mini-mapa" class="map-box"></div>
-        
         <label>Tipo de Via</label>
         <select id="tipo_via">
             <option value="Rua Residencial">🏠 Rua Residencial</option>
@@ -136,16 +149,13 @@
             <option value="Praça">🌳 Praça</option>
             <option value="Estacionamento">🅿️ Estacionamento</option>
         </select>
-
         <label>Quantidade de Vagas</label>
         <input type="number" id="qtd" placeholder="Ex: 8" inputmode="numeric">
-
         <label>Precisa de zona azul?</label>
         <div class="zona-azul-container">
             <label class="radio-item"><input type="radio" name="za" value="Sim"> SIM</label>
             <label class="radio-item"><input type="radio" name="za" value="Não" checked> NÃO</label>
         </div>
-
         <button class="btn-acao btn-indicar" onclick="salvarVaga()">Pode parar aqui</button>
     </div>
     <div class="footer-adm"><span class="link-adm" onclick="abrirLoginAdm()">ADM</span></div>
@@ -174,35 +184,44 @@
     let userLoc = { lat: -23.5505, lng: -46.6333 };
     let mapReg, mapCal, heatmap, infoWindow;
 
-    function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display = 'flex'; }
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
-    
-    function validarAcesso() { 
-        if(document.getElementById('senha-adm').value === '290519') { 
-            fecharModais(); 
-            document.getElementById('modal-acesso-master').style.display = 'flex'; 
-            carregarBI();
-        } else { alert("Senha incorreta!"); }
-    }
+    function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display = 'flex'; }
+    function validarAcesso() { if(document.getElementById('senha-adm').value === '290519') { fecharModais(); document.getElementById('modal-acesso-master').style.display = 'flex'; carregarBI(); } else { alert("Senha incorreta!"); }}
 
     function carregarBI() {
         db.ref('vagas_sp').once('value', snap => {
             const data = snap.val(); if(!data) return;
             const entries = Object.values(data);
             
-            // Cálculos para os Cards
-            const totalPosts = entries.length;
-            const totalVagasSomadas = entries.reduce((acc, v) => acc + (v.qtd || 0), 0);
+            document.getElementById('m-posts').innerText = entries.length;
+            document.getElementById('m-vagas-total').innerText = entries.reduce((acc, v) => acc + (v.qtd || 0), 0);
             const totalCliques = entries.reduce((acc, v) => acc + (v.cliques || 0), 0);
-            const zaSim = entries.filter(v => v.zona_azul === 'Sim').length;
-            const zaNao = entries.filter(v => v.zona_azul === 'Não').length;
-
-            // Atribuição nos Cards
-            document.getElementById('m-posts').innerText = totalPosts;
-            document.getElementById('m-vagas-total').innerText = totalVagasSomadas;
             document.getElementById('m-cliques').innerText = totalCliques;
-            document.getElementById('m-za-sim').innerText = zaSim;
-            document.getElementById('m-za-nao').innerText = zaNao;
+            document.getElementById('m-za-sim').innerText = entries.filter(v => v.zona_azul === 'Sim').length;
+            document.getElementById('m-za-nao').innerText = entries.filter(v => v.zona_azul === 'Não').length;
+
+            // Lógica de Pico por Horário (baseado nos cliques armazenados)
+            // Nota: Para precisão total, registraríamos cada clique com seu timestamp. 
+            // Aqui simulamos a distribuição baseada no momento da indicação para teste inicial.
+            let h = { manha: 0, tarde: 0, noite: 0, madruga: 0 };
+            entries.forEach(v => {
+                let hour = new Date(v.ts).getHours();
+                let c = v.cliques || 0;
+                if(hour >= 6 && hour < 12) h.manha += c;
+                else if(hour >= 12 && hour < 18) h.tarde += c;
+                else if(hour >= 18 && hour < 24) h.noite += c;
+                else h.madruga += c;
+            });
+
+            const max = Math.max(h.manha, h.tarde, h.noite, h.madruga, 1);
+            document.getElementById('val-manha').innerText = h.manha;
+            document.getElementById('bar-manha').style.width = (h.manha/max*100) + "%";
+            document.getElementById('val-tarde').innerText = h.tarde;
+            document.getElementById('bar-tarde').style.width = (h.tarde/max*100) + "%";
+            document.getElementById('val-noite').innerText = h.noite;
+            document.getElementById('bar-noite').style.width = (h.noite/max*100) + "%";
+            document.getElementById('val-madruga').innerText = h.madruga;
+            document.getElementById('bar-madruga').style.width = (h.madruga/max*100) + "%";
         });
     }
 
@@ -232,12 +251,8 @@
     function salvarVaga() {
         const qtd = document.getElementById('qtd').value;
         if(!qtd) return alert("Quantas vagas você viu?");
-        db.ref('vagas_sp').push({ 
-            qtd: parseInt(qtd), tipo: document.getElementById('tipo_via').value, 
-            zona_azul: document.querySelector('input[name="za"]:checked').value, 
-            lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 
-        });
-        alert("Obrigado por ajudar a comunidade!");
+        db.ref('vagas_sp').push({ qtd: parseInt(qtd), tipo: document.getElementById('tipo_via').value, zona_azul: document.querySelector('input[name="za"]:checked').value, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 });
+        alert("Obrigado por ajudar!");
         document.getElementById('qtd').value = "";
     }
 
@@ -254,17 +269,14 @@
             Object.keys(data).forEach(id => {
                 const v = data[id];
                 points.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
-                
                 const m = new google.maps.Marker({ 
                     position: {lat:v.lat, lng:v.lng}, map: mapCal, 
                     label: { text: "📍", fontSize: v.cliques > 5 ? "26px" : "20px" },
                     icon: { path: google.maps.SymbolPath.CIRCLE, fillOpacity: 0, strokeOpacity: 0 }
                 });
-
                 m.addListener("click", () => {
                     const dataObj = new Date(v.ts);
                     const formatada = `${dataObj.getDate().toString().padStart(2,'0')}/${(dataObj.getMonth()+1).toString().padStart(2,'0')} às ${dataObj.getHours().toString().padStart(2,'0')}:${dataObj.getMinutes().toString().padStart(2,'0')}`;
-                    
                     infoWindow.setContent(`
                         <div style="text-align:center; padding:10px; font-family:sans-serif;">
                             <b style="font-size:1.1rem; text-transform:uppercase;">${v.tipo}</b><br>
@@ -275,16 +287,10 @@
                     infoWindow.open(mapCal, m);
                 });
             });
-
             if(heatmap) heatmap.setMap(null);
             heatmap = new google.maps.visualization.HeatmapLayer({ 
                 data: points, map: mapCal, radius: 45,
-                gradient: [
-                    'rgba(0, 255, 255, 0)',
-                    'rgba(239, 68, 68, 1)',
-                    'rgba(245, 158, 11, 1)',
-                    'rgba(16, 185, 129, 1)'
-                ]
+                gradient: ['rgba(0, 255, 255, 0)','rgba(239, 68, 68, 1)','rgba(245, 158, 11, 1)','rgba(16, 185, 129, 1)']
             });
         });
     }

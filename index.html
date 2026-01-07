@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pode Parar Aqui - v7.5</title>
+    <title>Pode Parar Aqui - v7.6</title>
     
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/livre-para-parar/manifest.json">
     <meta name="theme-color" content="#33ccff">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icone-192.png">
+    <link rel="apple-touch-icon" href="/livre-para-parar/icone-192.png">
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -172,11 +172,11 @@
         s.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAyeljGisp0yk242H4s3VC_xFeBwESDrjU&libraries=visualization&callback=initApp`;
         s.async = true; document.head.appendChild(s);
 
-        // REGISTRO DO SERVICE WORKER (PASSO B)
+        // REGISTRO DO SERVICE WORKER COM CAMINHO COMPLETO DO GITHUB
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker registrado!', reg))
+                navigator.serviceWorker.register('/livre-para-parar/sw.js')
+                    .then(reg => console.log('Service Worker registrado com sucesso!', reg))
                     .catch(err => console.error('Falha ao registrar Service Worker', err));
             });
         }

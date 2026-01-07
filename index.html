@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP - v6.7</title>
+    <title>Livre Parar SP - v6.8</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -19,7 +19,6 @@
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
-        /* Navegação Superior */
         .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: 0.2s; text-transform: uppercase; }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
@@ -28,7 +27,6 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
-        /* Estilo dos Cards */
         .card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.05); }
         .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; }
         #mini-mapa { height: 200px; margin-bottom: 15px; }
@@ -37,7 +35,6 @@
         label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
         select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
-        /* BOTÕES PADRÃO WAZE */
         .btn-acao { 
             width: 100%; border: 3px solid var(--waze-dark); padding: 18px; border-radius: 50px; 
             font-weight: 900; cursor: pointer; font-size: 1rem; transition: all 0.1s; 
@@ -54,11 +51,9 @@
         .radio-item:has(input:checked) { background: var(--waze-blue); color: white; }
         .radio-item input { display: none; }
 
-        /* BOTÃO ADM DISCRETO E CENTRALIZADO */
-        .footer-adm { text-align: center; padding: 20px 0; width: 100%; clear: both; }
-        .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; opacity: 0.3; text-transform: uppercase; }
+        .footer-adm { text-align: center; padding: 20px 0; margin-top: 10px; }
+        .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; opacity: 0.4; text-transform: uppercase; }
 
-        /* Modais ADM */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 20px; box-sizing: border-box; }
         .master-card { background: #f0f3f6; width: 100%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); max-height: 90vh; overflow-y: auto; }
         
@@ -88,7 +83,7 @@
 
 <div id="modal-detalhes" class="modal-overlay">
     <div class="master-card" style="background: white;">
-        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem; text-transform: uppercase; color: var(--waze-blue);">RUAS</h3>
+        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem; text-transform: uppercase; color: var(--waze-blue);">LISTA</h3>
         <div id="lista-detalhada" class="lista-ruas"></div>
         <button class="btn-acao" style="margin-top: 15px; background: var(--waze-dark); color:white; padding: 12px;" onclick="document.getElementById('modal-detalhes').style.display='none'">VOLTAR</button>
     </div>
@@ -98,7 +93,7 @@
     <div class="master-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 style="margin:0; font-weight: 900;">DASHBOARD BI</h3>
-            <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:10px; font-weight:800; cursor:pointer; font-size:0.6rem;">X</button>
+            <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:10px; font-weight:800; cursor:pointer;">X</button>
         </div>
         <div class="grid-master" id="grid-bi"></div>
     </div>
@@ -113,7 +108,6 @@
     <div class="card">
         <label style="margin-top:0;">📍 Sua Localização</label>
         <div id="mini-mapa" class="map-box"></div>
-        
         <label>Tipo de Via</label>
         <select id="tipo_via">
             <option value="Rua Residencial">🏠 Rua Residencial</option>
@@ -121,16 +115,13 @@
             <option value="Praça">🌳 Praça</option>
             <option value="Estacionamento">🅿️ Estacionamento</option>
         </select>
-
         <label>Quantidade de Vagas</label>
         <input type="number" id="qtd" placeholder="Ex: 8" inputmode="numeric">
-
         <label>Precisa de zona azul?</label>
         <div class="zona-azul-container">
             <label class="radio-item"><input type="radio" name="za" value="Sim"> SIM</label>
             <label class="radio-item"><input type="radio" name="za" value="Não" checked> NÃO</label>
         </div>
-
         <button class="btn-acao btn-indicar" onclick="salvarVaga()">Pode parar aqui</button>
     </div>
     <div class="footer-adm"><span class="link-adm" onclick="abrirLoginAdm()">ADM</span></div>
@@ -144,7 +135,6 @@
             <div class="legenda-item" style="background:var(--amarelo-laranja)">5 A 10</div>
             <div class="legenda-item" style="background:var(--vermelho)">POUCAS</div>
         </div>
-        
         <label style="margin-top: 10px;">🔍 Ver vagas em outro local</label>
         <input type="text" id="input-destino" placeholder="Ex: Av. Paulista, 1000">
         <button class="btn-acao btn-buscar" onclick="buscarDestino()">Consultar Vagas</button>
@@ -186,17 +176,17 @@
         const q = document.getElementById('qtd').value;
         if(!q) return alert("Quantas vagas?");
         db.ref('vagas_sp').push({ qtd: parseInt(q), tipo: document.getElementById('tipo_via').value, zona_azul: document.querySelector('input[name="za"]:checked').value, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 });
-        alert("Indicação enviada!"); document.getElementById('qtd').value = "";
+        alert("Enviado!"); document.getElementById('qtd').value = "";
     }
 
     function buscarDestino() {
         const endereco = document.getElementById('input-destino').value;
-        if(!endereco) return alert("Digite o endereço de destino!");
+        if(!endereco) return alert("Digite um endereço!");
         geocoder.geocode({ address: endereco }, (results, status) => {
             if (status === "OK") {
                 mapCal.setCenter(results[0].geometry.location);
                 mapCal.setZoom(17);
-            } else { alert("Local não encontrado."); }
+            } else { alert("Não encontrado."); }
         });
     }
 
@@ -214,8 +204,10 @@
                     icon: { url: 'data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text y="30" font-size="30">📍</text></svg>', scaledSize: new google.maps.Size(40, 40) }
                 });
                 marker.addListener("click", () => {
+                    const dt = new Date(v.ts);
+                    const dataHora = `${dt.toLocaleDateString('pt-BR')} às ${dt.getHours().toString().padStart(2,'0')}:${dt.getMinutes().toString().padStart(2,'0')}`;
                     const zaTxt = v.zona_azul === 'Sim' ? '🔴 ZONA AZUL' : '🟢 LIVRE';
-                    infoWindow.setContent(`<div style="text-align:center; padding:5px;"><b>${v.tipo}</b><br><small>${zaTxt}</small><br><span style="font-weight:900; color:var(--verde-waze); font-size:1.1rem;">${v.qtd} VAGAS</span><br><button onclick="ir('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS!</button></div>`);
+                    infoWindow.setContent(`<div style="text-align:center; padding:5px; font-family:sans-serif;"><b>${v.tipo}</b><br><small>${zaTxt}</small><br><span style="font-weight:900; color:var(--verde-waze); font-size:1rem;">${v.qtd} VAGAS</span><br><small style="color:#666">Atualizado: ${dataHora}</small><br><button onclick="ir('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS!</button></div>`);
                     infoWindow.open(mapCal, marker);
                 });
             });
@@ -226,10 +218,9 @@
 
     window.ir = function(id, lat, lng) {
         db.ref('vagas_sp/'+id+'/cliques').transaction(c => (c||0)+1);
-        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
+        window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`);
     }
 
-    // ADM & BI
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
     function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display='flex'; }
     function validarAcesso() { 
@@ -237,7 +228,7 @@
             fecharModais(); 
             document.getElementById('modal-acesso-master').style.display='flex'; 
             carregarBI();
-        } else { alert("Senha incorreta!"); }
+        } else { alert("Erro!"); }
     }
 
     function carregarBI() {
@@ -261,7 +252,7 @@
         container.innerHTML = "";
         const filtrados = tipo === 'Geral' ? dadosGlobais : dadosGlobais.filter(v => v.zona_azul === tipo);
         filtrados.reverse().forEach(v => {
-            container.innerHTML += `<div class="rua-item"><div><b>${v.tipo}</b><br><small>${new Date(v.ts).toLocaleDateString()}</small></div><span style="font-weight:900">${v.qtd} vgs</span></div>`;
+            container.innerHTML += `<div class="rua-item"><div><b>${v.tipo}</b><br><small>${new Date(v.ts).toLocaleString()}</small></div><span style="font-weight:900">${v.qtd} vgs</span></div>`;
         });
         document.getElementById('modal-detalhes').style.display = 'flex';
     }

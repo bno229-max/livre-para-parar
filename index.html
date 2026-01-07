@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pode Parar Aqui - v7.4</title>
+    <title>Pode Parar Aqui - v7.5</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#33ccff">
@@ -171,6 +171,15 @@
         const s = document.createElement('script');
         s.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAyeljGisp0yk242H4s3VC_xFeBwESDrjU&libraries=visualization&callback=initApp`;
         s.async = true; document.head.appendChild(s);
+
+        // REGISTRO DO SERVICE WORKER (PASSO B)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrado!', reg))
+                    .catch(err => console.error('Falha ao registrar Service Worker', err));
+            });
+        }
     }
 
     window.initApp = function() {

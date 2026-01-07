@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP - v6.5</title>
+    <title>Livre Parar SP - v6.7</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -19,7 +19,7 @@
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
-        /* Navegação */
+        /* Navegação Superior */
         .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: 0.2s; text-transform: uppercase; }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
@@ -28,37 +28,41 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
+        /* Estilo dos Cards */
         .card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.05); }
         .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; }
         #mini-mapa { height: 200px; margin-bottom: 15px; }
-        #mapa-calor { height: 480px; }
+        #mapa-calor { height: 400px; }
 
         label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
         select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
-        /* BOTOES ROBUSTOS ORIGINAIS */
+        /* BOTÕES PADRÃO WAZE */
         .btn-acao { 
             width: 100%; border: 3px solid var(--waze-dark); padding: 18px; border-radius: 50px; 
             font-weight: 900; cursor: pointer; font-size: 1rem; transition: all 0.1s; 
             box-shadow: 0 6px 0px var(--waze-dark); text-transform: uppercase;
         }
         .btn-acao:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--waze-dark); }
+        
         .btn-indicar { background: var(--verde-waze); color: white; margin-top: 25px; }
         .btn-vamos { background: var(--waze-blue); color: white; margin-top: 10px; border: 2px solid var(--waze-dark); box-shadow: 0 4px 0px var(--waze-dark); }
+        .btn-buscar { background: var(--amarelo-laranja); color: white; margin-top: 10px; padding: 12px; font-size: 0.8rem; }
 
         .zona-azul-container { display: flex; gap: 15px; margin-top: 10px; }
         .radio-item { flex: 1; background: #f1f5f9; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); text-align: center; font-weight: 800; cursor: pointer; }
         .radio-item:has(input:checked) { background: var(--waze-blue); color: white; }
         .radio-item input { display: none; }
 
-        /* MODAIS E CAMADAS (Z-INDEX) */
+        /* BOTÃO ADM DISCRETO E CENTRALIZADO */
+        .footer-adm { text-align: center; padding: 20px 0; width: 100%; clear: both; }
+        .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; opacity: 0.3; text-transform: uppercase; }
+
+        /* Modais ADM */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 20px; box-sizing: border-box; }
         .master-card { background: #f0f3f6; width: 100%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); max-height: 90vh; overflow-y: auto; }
         
-        /* Prioridade para a lista de detalhes */
         #modal-detalhes { z-index: 10001; }
-        #modal-acesso-master { z-index: 9999; }
-
         .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 10px; border-radius: 15px; text-align: center; cursor: pointer; }
         .valor-adm { display: block; font-size: 1.4rem; font-weight: 900; color: var(--waze-blue); line-height: 1; }
@@ -66,9 +70,8 @@
 
         .lista-ruas { margin-top: 15px; background: white; border-radius: 20px; border: 3px solid var(--waze-dark); padding: 10px; max-height: 350px; overflow-y: auto; }
         .rua-item { padding: 12px; border-bottom: 2px solid #f0f3f6; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
-        .rua-item:last-child { border-bottom: none; }
 
-        .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; }
+        .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; margin-bottom: 10px; }
         .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: white; text-align: center; }
     </style>
 </head>
@@ -77,17 +80,17 @@
 <div id="modal-login-adm" class="modal-overlay">
     <div class="master-card" style="text-align: center; background: white;">
         <h2 style="margin-bottom: 20px;">🔒 Terminal Master</h2>
-        <input type="password" id="senha-adm" placeholder="Senha de Acesso" style="text-align: center;">
+        <input type="password" id="senha-adm" placeholder="Senha" style="text-align: center;">
         <button class="btn-acao btn-indicar" onclick="validarAcesso()">Entrar</button>
         <p onclick="fecharModais()" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; cursor:pointer;">VOLTAR</p>
     </div>
 </div>
 
 <div id="modal-detalhes" class="modal-overlay">
-    <div class="master-card" style="background: white; border-color: var(--waze-blue);">
-        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1.1rem; text-transform: uppercase; color: var(--waze-blue);">RUAS</h3>
+    <div class="master-card" style="background: white;">
+        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem; text-transform: uppercase; color: var(--waze-blue);">RUAS</h3>
         <div id="lista-detalhada" class="lista-ruas"></div>
-        <button class="btn-acao" style="margin-top: 15px; background: var(--waze-dark); color:white; padding: 12px;" onclick="document.getElementById('modal-detalhes').style.display='none'">VOLTAR AO DASHBOARD</button>
+        <button class="btn-acao" style="margin-top: 15px; background: var(--waze-dark); color:white; padding: 12px;" onclick="document.getElementById('modal-detalhes').style.display='none'">VOLTAR</button>
     </div>
 </div>
 
@@ -95,29 +98,22 @@
     <div class="master-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 style="margin:0; font-weight: 900;">DASHBOARD BI</h3>
-            <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:10px; font-weight:800; cursor:pointer; font-size:0.6rem;">FECHAR</button>
+            <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:10px; font-weight:800; cursor:pointer; font-size:0.6rem;">X</button>
         </div>
-        <div class="grid-master">
-            <div class="mini-card-adm" style="grid-column: span 2; background: #e0f2fe; cursor: default;">
-                <span class="valor-adm" id="m-vagas-total">0</span><span class="desc-adm">Soma Geral de Vagas</span>
-            </div>
-            <div class="mini-card-adm" onclick="abrirLista('Geral')"><span class="valor-adm" id="m-posts">0</span><span class="desc-adm">Total Indicações</span></div>
-            <div class="mini-card-adm"><span class="valor-adm" id="m-cliques" style="color: var(--amarelo-laranja);">0</span><span class="desc-adm">Cliques "Vamos Lá"</span></div>
-            <div class="mini-card-adm" onclick="abrirLista('Sim')" style="border-bottom: 5px solid var(--waze-blue);"><span class="valor-adm" id="m-za-sim" style="color: var(--waze-blue);">0</span><span class="desc-adm">Zona Azul (Sim) ➡️</span></div>
-            <div class="mini-card-adm" onclick="abrirLista('Não')" style="border-bottom: 5px solid var(--waze-dark);"><span class="valor-adm" id="m-za-nao">0</span><span class="desc-adm">Zona Azul (Não) ➡️</span></div>
-        </div>
+        <div class="grid-master" id="grid-bi"></div>
     </div>
 </div>
 
 <nav class="nav">
     <div class="tab active" onclick="switchTab('registrar')">Indicar Vagas</div>
-    <div class="tab" onclick="switchTab('calor')">Vagas Disponíveis na Região</div>
+    <div class="tab" onclick="switchTab('calor')">Vagas na Região</div>
 </nav>
 
 <div id="view-registrar" class="view active">
     <div class="card">
         <label style="margin-top:0;">📍 Sua Localização</label>
         <div id="mini-mapa" class="map-box"></div>
+        
         <label>Tipo de Via</label>
         <select id="tipo_via">
             <option value="Rua Residencial">🏠 Rua Residencial</option>
@@ -125,13 +121,16 @@
             <option value="Praça">🌳 Praça</option>
             <option value="Estacionamento">🅿️ Estacionamento</option>
         </select>
+
         <label>Quantidade de Vagas</label>
         <input type="number" id="qtd" placeholder="Ex: 8" inputmode="numeric">
+
         <label>Precisa de zona azul?</label>
         <div class="zona-azul-container">
             <label class="radio-item"><input type="radio" name="za" value="Sim"> SIM</label>
             <label class="radio-item"><input type="radio" name="za" value="Não" checked> NÃO</label>
         </div>
+
         <button class="btn-acao btn-indicar" onclick="salvarVaga()">Pode parar aqui</button>
     </div>
     <div class="footer-adm"><span class="link-adm" onclick="abrirLoginAdm()">ADM</span></div>
@@ -145,14 +144,21 @@
             <div class="legenda-item" style="background:var(--amarelo-laranja)">5 A 10</div>
             <div class="legenda-item" style="background:var(--vermelho)">POUCAS</div>
         </div>
+        
+        <label style="margin-top: 10px;">🔍 Ver vagas em outro local</label>
+        <input type="text" id="input-destino" placeholder="Ex: Av. Paulista, 1000">
+        <button class="btn-acao btn-buscar" onclick="buscarDestino()">Consultar Vagas</button>
     </div>
+    <div class="footer-adm"><span class="link-adm" onclick="abrirLoginAdm()">ADM</span></div>
 </div>
 
 <script>
     const firebaseConfig = { apiKey: "AIzaSyCv33-vr99tYWdxdeJP4rsp39ro5M2gZNo", authDomain: "olhar-urbano.firebaseapp.com", databaseURL: "https://olhar-urbano-default-rtdb.firebaseio.com", projectId: "olhar-urbano" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    let userLoc = { lat: -23.5505, lng: -46.6333 }, mapReg, mapCal, infoWindow, heatmap, dadosGlobais = [];
+    let userLoc = { lat: -23.5505, lng: -46.6333 }, mapReg, mapCal, infoWindow, heatmap, dadosGlobais = [], geocoder;
+
+    const wazeStyle = [{"featureType":"landscape","stylers":[{"color":"#f0f3f6"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"#ffffff"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#fffbc2"}]}];
 
     function start() {
         const s = document.createElement('script');
@@ -162,14 +168,13 @@
 
     window.initApp = function() {
         infoWindow = new google.maps.InfoWindow();
+        geocoder = new google.maps.Geocoder();
         navigator.geolocation.getCurrentPosition(p => {
             userLoc = { lat: p.coords.latitude, lng: p.coords.longitude };
             mapReg = new google.maps.Map(document.getElementById("mini-mapa"), { zoom: 17, center: userLoc, disableDefaultUI: true, styles: wazeStyle });
             new google.maps.Marker({ position: userLoc, map: mapReg });
         });
     };
-
-    const wazeStyle = [{"featureType":"landscape","stylers":[{"color":"#f0f3f6"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"#ffffff"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#fffbc2"}]}];
 
     function switchTab(t) {
         document.querySelectorAll('.tab, .view').forEach(e => e.classList.remove('active'));
@@ -181,39 +186,36 @@
         const q = document.getElementById('qtd').value;
         if(!q) return alert("Quantas vagas?");
         db.ref('vagas_sp').push({ qtd: parseInt(q), tipo: document.getElementById('tipo_via').value, zona_azul: document.querySelector('input[name="za"]:checked').value, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 });
-        alert("Obrigado!"); document.getElementById('qtd').value = "";
+        alert("Indicação enviada!"); document.getElementById('qtd').value = "";
+    }
+
+    function buscarDestino() {
+        const endereco = document.getElementById('input-destino').value;
+        if(!endereco) return alert("Digite o endereço de destino!");
+        geocoder.geocode({ address: endereco }, (results, status) => {
+            if (status === "OK") {
+                mapCal.setCenter(results[0].geometry.location);
+                mapCal.setZoom(17);
+            } else { alert("Local não encontrado."); }
+        });
     }
 
     function renderHeatmap() {
         mapCal = new google.maps.Map(document.getElementById("mapa-calor"), { zoom: 15, center: userLoc, disableDefaultUI: true, styles: wazeStyle });
         db.ref('vagas_sp').on('value', snap => {
             const data = snap.val(); if(!data) return;
-            const points = [];
-            dadosGlobais = Object.values(data);
-            
+            const points = []; dadosGlobais = Object.values(data);
             Object.keys(data).forEach(id => {
                 const v = data[id];
                 points.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
-                
                 const marker = new google.maps.Marker({
                     position: {lat: v.lat, lng: v.lng},
                     map: mapCal,
                     icon: { url: 'data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text y="30" font-size="30">📍</text></svg>', scaledSize: new google.maps.Size(40, 40) }
                 });
-
                 marker.addListener("click", () => {
-                    const dt = new Date(v.ts);
-                    const hora = `${dt.getDate().toString().padStart(2,'0')}/${(dt.getMonth()+1).toString().padStart(2,'0')} às ${dt.getHours().toString().padStart(2,'0')}:${dt.getMinutes().toString().padStart(2,'0')}`;
-                    const zaTxt = v.zona_azul === 'Sim' ? '🔴 PRECISA ZONA AZUL' : '🟢 LIVRE DE ZONA AZUL';
-
-                    infoWindow.setContent(`
-                        <div style="text-align:center; padding:5px; font-family:sans-serif;">
-                            <b style="text-transform:uppercase; font-size:1rem;">${v.tipo}</b><br>
-                            <span style="font-weight:800; font-size:0.7rem;">${zaTxt}</span><br>
-                            <span style="font-weight:900; color:var(--verde-waze); font-size:1.1rem;">${v.qtd} VAGAS LIVRES</span><br>
-                            <small style="color:#666">Atualizado: ${hora}</small><br>
-                            <button onclick="ir('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS LÁ!</button>
-                        </div>`);
+                    const zaTxt = v.zona_azul === 'Sim' ? '🔴 ZONA AZUL' : '🟢 LIVRE';
+                    infoWindow.setContent(`<div style="text-align:center; padding:5px;"><b>${v.tipo}</b><br><small>${zaTxt}</small><br><span style="font-weight:900; color:var(--verde-waze); font-size:1.1rem;">${v.qtd} VAGAS</span><br><button onclick="ir('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS!</button></div>`);
                     infoWindow.open(mapCal, marker);
                 });
             });
@@ -227,6 +229,7 @@
         window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
     }
 
+    // ADM & BI
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
     function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display='flex'; }
     function validarAcesso() { 
@@ -238,42 +241,28 @@
     }
 
     function carregarBI() {
-        db.ref('vagas_sp').once('value', snap => {
-            const data = snap.val(); if(!data) return;
-            const entries = Object.values(data);
-            document.getElementById('m-posts').innerText = entries.length;
-            document.getElementById('m-vagas-total').innerText = entries.reduce((acc, v) => acc + (v.qtd || 0), 0);
-            document.getElementById('m-cliques').innerText = entries.reduce((acc, v) => acc + (v.cliques || 0), 0);
-            document.getElementById('m-za-sim').innerText = entries.filter(v => v.zona_azul === 'Sim').length;
-            document.getElementById('m-za-nao').innerText = entries.filter(v => v.zona_azul === 'Não').length;
-        });
+        const entries = dadosGlobais;
+        const totalVagas = entries.reduce((acc, v) => acc + (v.qtd || 0), 0);
+        const cliques = entries.reduce((acc, v) => acc + (v.cliques || 0), 0);
+        const zaSim = entries.filter(v => v.zona_azul === 'Sim').length;
+        const zaNao = entries.filter(v => v.zona_azul === 'Não').length;
+
+        document.getElementById('grid-bi').innerHTML = `
+            <div class="mini-card-adm" style="grid-column: span 2; background: #e0f2fe;"><span class="valor-adm">${totalVagas}</span><span class="desc-adm">Vagas Totais</span></div>
+            <div class="mini-card-adm" onclick="abrirLista('Geral')"><span class="valor-adm">${entries.length}</span><span class="desc-adm">Posts</span></div>
+            <div class="mini-card-adm"><span class="valor-adm" style="color:var(--amarelo-laranja)">${cliques}</span><span class="desc-adm">Cliques</span></div>
+            <div class="mini-card-adm" onclick="abrirLista('Sim')"><span class="valor-adm" style="color:var(--waze-blue)">${zaSim}</span><span class="desc-adm">Zona Azul</span></div>
+            <div class="mini-card-adm" onclick="abrirLista('Não')"><span class="valor-adm">${zaNao}</span><span class="desc-adm">Livre</span></div>
+        `;
     }
 
     function abrirLista(tipo) {
         const container = document.getElementById('lista-detalhada');
-        const titulo = document.getElementById('detalhe-titulo');
         container.innerHTML = "";
-        
-        titulo.innerText = tipo === 'Geral' ? "Todas as Indicações" : `Vias Zona Azul: ${tipo}`;
-        
         const filtrados = tipo === 'Geral' ? dadosGlobais : dadosGlobais.filter(v => v.zona_azul === tipo);
-        
-        if(filtrados.length === 0) {
-            container.innerHTML = "<p style='text-align:center; padding:20px; opacity:0.5;'>Nenhum registro.</p>";
-        } else {
-            filtrados.reverse().forEach(v => {
-                const dt = new Date(v.ts);
-                const hora = `${dt.getHours()}:${dt.getMinutes().toString().padStart(2,'0')}`;
-                container.innerHTML += `
-                    <div class="rua-item">
-                        <div>
-                            <b style="color:var(--waze-dark)">${v.tipo}</b><br>
-                            <small style="color:#94a3b8">${dt.toLocaleDateString('pt-BR')} às ${hora}</small>
-                        </div>
-                        <span style="font-weight:900; background: #f0f3f6; padding: 4px 10px; border-radius: 10px;">${v.qtd} vgs</span>
-                    </div>`;
-            });
-        }
+        filtrados.reverse().forEach(v => {
+            container.innerHTML += `<div class="rua-item"><div><b>${v.tipo}</b><br><small>${new Date(v.ts).toLocaleDateString()}</small></div><span style="font-weight:900">${v.qtd} vgs</span></div>`;
+        });
         document.getElementById('modal-detalhes').style.display = 'flex';
     }
     

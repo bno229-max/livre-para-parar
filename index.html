@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Livre Parar SP</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
     <style>
         :root { 
@@ -17,36 +19,25 @@
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
+        /* Menu Superior */
         .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        
-        .tab { 
-            flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; 
-            color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: all 0.2s ease;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
+        .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: all 0.2s ease; text-transform: uppercase; }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
-        .tab:hover:not(.active) { background: #e2e8f0; color: var(--waze-dark); }
 
         .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { 
-            background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; 
-            border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
-        }
+        .card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.1); }
         
         .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; position: relative; }
         #mini-mapa { height: 200px; margin-bottom: 15px; }
         #mapa-calor { height: 480px; }
 
         label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
-        
-        select, input { 
-            width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); 
-            background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none;
-        }
+        select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
+        /* Botão Principal com Efeito Hover/Active */
         .btn-indicar { 
             width: 100%; background: var(--verde-waze); color: white; border: 3px solid var(--waze-dark); 
             padding: 18px; border-radius: 50px; font-weight: 900; cursor: pointer; margin-top: 25px; 
@@ -56,24 +47,51 @@
         .btn-indicar:hover { background: #0ea371; transform: translateY(-2px); box-shadow: 0 8px 0px var(--waze-dark); }
         .btn-indicar:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--waze-dark); }
 
+        /* Zona Azul */
         .zona-azul-container { display: flex; gap: 15px; margin-top: 10px; }
-        .radio-item { 
-            flex: 1; background: #f1f5f9; padding: 12px; border-radius: 15px; 
-            border: 3px solid var(--waze-dark); text-align: center; font-weight: 800; cursor: pointer;
-            transition: all 0.2s ease;
-        }
+        .radio-item { flex: 1; background: #f1f5f9; padding: 12px; border-radius: 15px; border: 3px solid var(--waze-dark); text-align: center; font-weight: 800; cursor: pointer; transition: 0.2s; }
         .radio-item:hover { transform: scale(1.03); background: white; border-color: var(--waze-blue); }
         .radio-item input { display: none; }
         .radio-item:has(input:checked) { background: var(--waze-blue); color: white; }
 
+        /* Estilo da Tela de Bloqueio (Modal de Cadastro) */
+        #modal-cadastro {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px); padding: 20px; box-sizing: border-box;
+        }
+        .modal-card {
+            background: white; width: 100%; max-width: 350px; border-radius: 30px;
+            padding: 30px; text-align: center; border: 4px solid var(--waze-dark);
+            box-shadow: 10px 10px 0px var(--waze-dark);
+        }
+        .btn-google {
+            background: white; color: #444; border: 3px solid var(--waze-dark);
+            padding: 15px; border-radius: 50px; font-weight: 800; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            cursor: pointer; margin-top: 20px; transition: 0.2s;
+        }
+        .btn-google:hover { background: #f1f5f9; transform: scale(1.05); }
+        .btn-google img { width: 20px; }
+
+        /* Legenda */
         .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; }
         .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: var(--waze-dark); text-align: center; }
-        
-        .waze-popup { padding: 5px; text-align: center; min-width: 140px; }
-        .btn-go { background: var(--waze-blue); border: 2px solid var(--waze-dark); padding: 8px 15px; border-radius: 20px; font-weight: 900; cursor: pointer; margin-top: 10px; width: 100%; transition: background 0.2s; }
     </style>
 </head>
 <body>
+
+<div id="modal-cadastro">
+    <div class="modal-card">
+        <h2 style="color: var(--waze-blue); margin: 0;">Você é fera! 🚀</h2>
+        <p style="font-weight: 800; margin-top: 15px;">Você já ajudou 3 motoristas hoje! Entre para continuar compartilhando e salvar seu histórico.</p>
+        <button class="btn-google" onclick="loginGoogle()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg">
+            ENTRAR COM GOOGLE
+        </button>
+        <p style="font-size: 0.7rem; color: #64748b; margin-top: 20px;">Rápido, seguro e sem senhas!</p>
+    </div>
+</div>
 
 <nav class="nav">
     <div class="tab active" onclick="switchTab('registrar')">Indicar Vagas</div>
@@ -118,18 +136,35 @@
 </div>
 
 <script>
-    const GOOGLE_KEY = "AIzaSyAyeljGisp0yk242H4s3VC_xFeBwESDrjU";
+    // Configurações do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyCv33-vr99tYWdxdeJP4rsp39ro5M2gZNo",
         authDomain: "olhar-urbano.firebaseapp.com",
         databaseURL: "https://olhar-urbano-default-rtdb.firebaseio.com",
         projectId: "olhar-urbano"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const auth = firebase.auth();
+
     let userLoc = { lat: -23.5505, lng: -46.6333 };
     let mapReg, mapCal, heatmap, infoWindow;
+    let usuarioLogado = null;
+
+    // Monitora estado do login
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            usuarioLogado = user;
+            document.getElementById('modal-cadastro').style.display = 'none';
+        }
+    });
+
+    async function loginGoogle() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+            await auth.signInWithPopup(provider);
+        } catch (e) { alert("Erro ao entrar: " + e.message); }
+    }
 
     const wazeMapStyle = [
         { "featureType": "landscape", "stylers": [{ "color": "#f0f3f6" }] },
@@ -139,7 +174,7 @@
 
     function start() {
         const s = document.createElement('script');
-        s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&libraries=visualization&callback=initApp`;
+        s.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAyeljGisp0yk242H4s3VC_xFeBwESDrjU&libraries=visualization&callback=initApp`;
         s.async = true;
         document.head.appendChild(s);
     }
@@ -167,45 +202,16 @@
         }
     }
 
-    function renderHeatmap() {
-        mapCal = new google.maps.Map(document.getElementById("mapa-calor"), {
-            zoom: 15, center: userLoc, disableDefaultUI: true, styles: wazeMapStyle
-        });
-
-        db.ref('vagas_sp').on('value', snapshot => {
-            const data = snapshot.val();
-            if(!data) return;
-            const heatPoints = [];
-            Object.values(data).forEach(v => {
-                heatPoints.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
-                let color = v.qtd > 10 ? '#10b981' : (v.qtd >= 5 ? '#f59e0b' : '#ef4444');
-                const marker = new google.maps.Marker({
-                    position: { lat: v.lat, lng: v.lng },
-                    map: mapCal,
-                    icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: color, fillOpacity: 1, scale: 12, strokeColor: '#222', strokeWeight: 3 }
-                });
-                marker.addListener("click", () => {
-                    infoWindow.setContent(`
-                        <div class="waze-popup">
-                            <b style="font-size:1.1rem;">${v.tipo}</b>
-                            <div style="margin:5px 0">Vagas: ${v.qtd} | Zona Azul: ${v.zona_azul}</div>
-                            <button class="btn-go" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}')">VAMOS LÁ!</button>
-                        </div>`);
-                    infoWindow.open(mapCal, marker);
-                });
-            });
-            if(heatmap) heatmap.setMap(null);
-            heatmap = new google.maps.visualization.HeatmapLayer({
-                data: heatPoints, map: mapCal, radius: 50, opacity: 0.6,
-                gradient: ['rgba(0,0,0,0)', 'rgba(239,68,68,1)', 'rgba(245,158,11,1)', 'rgba(16,185,129,1)']
-            });
-        });
-    }
-
     async function salvarVaga() {
         const qtd = document.getElementById('qtd').value;
-        const za = document.querySelector('input[name="za"]:checked').value;
         if(!qtd) return alert("Quantas vagas você viu?");
+
+        // Trava de 3 envios
+        let contagem = parseInt(localStorage.getItem('vagas_enviadas') || '0');
+        if (!usuarioLogado && contagem >= 3) {
+            document.getElementById('modal-cadastro').style.display = 'flex';
+            return;
+        }
 
         const btn = document.querySelector('.btn-indicar');
         btn.innerText = "ENVIADO! ✨";
@@ -213,9 +219,17 @@
         btn.style.color = "#222";
         
         db.ref('vagas_sp').push({
-            qtd: parseInt(qtd), tipo: document.getElementById('tipo_via').value,
-            zona_azul: za, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now()
+            qtd: parseInt(qtd), 
+            tipo: document.getElementById('tipo_via').value,
+            zona_azul: document.querySelector('input[name="za"]:checked').value,
+            lat: userLoc.lat, 
+            lng: userLoc.lng, 
+            ts: Date.now(),
+            user_email: usuarioLogado ? usuarioLogado.email : 'anonimo',
+            uid: usuarioLogado ? usuarioLogado.uid : 'anonimo'
         });
+
+        localStorage.setItem('vagas_enviadas', contagem + 1);
 
         setTimeout(() => {
             btn.innerText = "Pode parar aqui";
@@ -224,6 +238,25 @@
             document.getElementById('qtd').value = "";
             alert("Obrigado por ajudar a comunidade!");
         }, 800);
+    }
+
+    function renderHeatmap() {
+        mapCal = new google.maps.Map(document.getElementById("mapa-calor"), { zoom: 15, center: userLoc, disableDefaultUI: true, styles: wazeMapStyle });
+        db.ref('vagas_sp').on('value', snap => {
+            const data = snap.val(); if(!data) return;
+            const points = [];
+            Object.values(data).forEach(v => {
+                points.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
+                let col = v.qtd > 10 ? '#10b981' : (v.qtd >= 5 ? '#f59e0b' : '#ef4444');
+                const m = new google.maps.Marker({ position: {lat:v.lat, lng:v.lng}, map: mapCal, icon: {path: google.maps.SymbolPath.CIRCLE, fillColor: col, fillOpacity: 1, scale: 12, strokeColor: '#222', strokeWeight: 3}});
+                m.addListener("click", () => {
+                    infoWindow.setContent(`<div style="text-align:center;"><b>${v.tipo}</b><br>Vagas: ${v.qtd}<br><button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}')" style="background:var(--waze-blue); border:none; color:white; padding:5px 10px; border-radius:10px; margin-top:5px; cursor:pointer;">IR PARA VAGA</button></div>`);
+                    infoWindow.open(mapCal, m);
+                });
+            });
+            if(heatmap) heatmap.setMap(null);
+            heatmap = new google.maps.visualization.HeatmapLayer({ data: points, map: mapCal, radius: 50 });
+        });
     }
 
     window.onload = start;

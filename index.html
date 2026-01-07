@@ -11,37 +11,32 @@
         :root { 
             --waze-blue: #33ccff; 
             --waze-dark: #222222;
-            --verde: #10b981; --amarelo: #f59e0b; --vermelho: #ef4444; 
+            --verde-waze: #10b981; 
+            --amarelo: #f59e0b; --vermelho: #ef4444; 
         }
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
-        /* Navegação */
-        .nav { 
-            display: flex; background: white; padding: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;
-        }
+        .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        
         .tab { 
             flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; 
-            color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: 0.3s;
+            color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: all 0.2s ease;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
+        .tab:hover:not(.active) { background: #e2e8f0; color: var(--waze-dark); }
 
         .view { display: none; padding: 15px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Cards Estilo Waze */
         .card { 
             background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; 
             border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
         }
         
-        .map-box { 
-            width: 100%; border-radius: 20px; background: #e2e8f0; 
-            border: 3px solid var(--waze-dark); overflow: hidden; position: relative;
-        }
+        .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; position: relative; }
         #mini-mapa { height: 200px; margin-bottom: 15px; }
         #mapa-calor { height: 480px; }
 
@@ -49,42 +44,33 @@
         
         select, input { 
             width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); 
-            background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px;
-            outline: none;
+            background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none;
         }
 
-        /* Botão Interativo */
         .btn-indicar { 
-            width: 100%; background: #33ccff; color: var(--waze-dark); border: 3px solid var(--waze-dark); 
+            width: 100%; background: var(--verde-waze); color: white; border: 3px solid var(--waze-dark); 
             padding: 18px; border-radius: 50px; font-weight: 900; cursor: pointer; margin-top: 25px; 
-            font-size: 1.1rem; transition: 0.2s; box-shadow: 0 6px 0px var(--waze-dark);
-            text-transform: uppercase;
+            font-size: 1.1rem; transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            box-shadow: 0 6px 0px var(--waze-dark); text-transform: uppercase;
         }
+        .btn-indicar:hover { background: #0ea371; transform: translateY(-2px); box-shadow: 0 8px 0px var(--waze-dark); }
         .btn-indicar:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--waze-dark); }
 
-        /* Zona Azul */
         .zona-azul-container { display: flex; gap: 15px; margin-top: 10px; }
         .radio-item { 
             flex: 1; background: #f1f5f9; padding: 12px; border-radius: 15px; 
             border: 3px solid var(--waze-dark); text-align: center; font-weight: 800; cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
+        .radio-item:hover { transform: scale(1.03); background: white; border-color: var(--waze-blue); }
         .radio-item input { display: none; }
-        .radio-item:has(input:checked) { background: #ffdf00; transform: scale(1.02); }
+        .radio-item:has(input:checked) { background: var(--waze-blue); color: white; }
 
-        /* Legenda */
         .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; }
-        .legenda-item { 
-            flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; 
-            border: 2px solid var(--waze-dark); color: var(--waze-dark); text-align: center;
-        }
-
-        /* Popup do Pin */
+        .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: var(--waze-dark); text-align: center; }
+        
         .waze-popup { padding: 5px; text-align: center; min-width: 140px; }
-        .btn-go { 
-            background: #33ccff; border: 2px solid var(--waze-dark); padding: 8px 15px; 
-            border-radius: 20px; font-weight: 900; cursor: pointer; margin-top: 10px; width: 100%;
-        }
+        .btn-go { background: var(--waze-blue); border: 2px solid var(--waze-dark); padding: 8px 15px; border-radius: 20px; font-weight: 900; cursor: pointer; margin-top: 10px; width: 100%; transition: background 0.2s; }
     </style>
 </head>
 <body>
@@ -116,7 +102,7 @@
             <label class="radio-item"><input type="radio" name="za" value="Não" checked> NÃO</label>
         </div>
 
-        <button class="btn-indicar" onclick="salvarVaga()">Indicar Vagas Agora</button>
+        <button class="btn-indicar" onclick="salvarVaga()">Pode parar aqui</button>
     </div>
 </div>
 
@@ -124,7 +110,7 @@
     <div class="card" style="padding: 10px;">
         <div id="mapa-calor" class="map-box"></div>
         <div class="legenda">
-            <div class="legenda-item" style="background:var(--verde)">+10 VAGAS</div>
+            <div class="legenda-item" style="background:var(--verde-waze)">+10 VAGAS</div>
             <div class="legenda-item" style="background:var(--amarelo)">5-10 VAGAS</div>
             <div class="legenda-item" style="background:var(--vermelho)">POUCAS</div>
         </div>
@@ -201,7 +187,7 @@
                 marker.addListener("click", () => {
                     infoWindow.setContent(`
                         <div class="waze-popup">
-                            <b style="font-size:1.1rem; color:var(--waze-dark)">${v.tipo}</b>
+                            <b style="font-size:1.1rem;">${v.tipo}</b>
                             <div style="margin:5px 0">Vagas: ${v.qtd} | Zona Azul: ${v.zona_azul}</div>
                             <button class="btn-go" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${v.lat},${v.lng}')">VAMOS LÁ!</button>
                         </div>`);
@@ -222,19 +208,19 @@
         if(!qtd) return alert("Quantas vagas você viu?");
 
         const btn = document.querySelector('.btn-indicar');
-        const originalText = btn.innerText;
         btn.innerText = "ENVIADO! ✨";
         btn.style.background = "#ffdf00";
+        btn.style.color = "#222";
         
         db.ref('vagas_sp').push({
-            qtd: parseInt(qtd),
-            tipo: document.getElementById('tipo_via').value,
+            qtd: parseInt(qtd), tipo: document.getElementById('tipo_via').value,
             zona_azul: za, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now()
         });
 
         setTimeout(() => {
-            btn.innerText = originalText;
-            btn.style.background = "#33ccff";
+            btn.innerText = "Pode parar aqui";
+            btn.style.background = "#10b981";
+            btn.style.color = "white";
             document.getElementById('qtd').value = "";
             alert("Obrigado por ajudar a comunidade!");
         }, 800);

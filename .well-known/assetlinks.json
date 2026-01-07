@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.bno229_max.twa",
+        "sha256_cert_fingerprints": ["72:C9:81:8B:D0:A8:FA:9C:77:53:1E:0A:2F:A9:89:FD:A7:A5:96:55:D5:08:07:2C:E9:39:E3:51:81:4D:E8:9C"]
+      }
+    }]

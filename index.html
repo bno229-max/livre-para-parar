@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar - v7.2</title>
+    <title>Pode Parar Aqui</title>
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#33ccff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icone-192.png">
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
@@ -19,7 +25,6 @@
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
-        /* Navegação Superior */
         .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: 0.2s; text-transform: uppercase; }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
@@ -28,7 +33,6 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
-        /* Estilo dos Cards e Inputs */
         .card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.05); }
         .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; }
         #mini-mapa { height: 200px; margin-bottom: 15px; }
@@ -37,7 +41,6 @@
         label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
         select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
-        /* Botões Estilo Waze */
         .btn-acao { 
             width: 100%; border: 3px solid var(--waze-dark); padding: 18px; border-radius: 50px; 
             font-weight: 900; cursor: pointer; font-size: 1rem; transition: all 0.1s; 
@@ -53,18 +56,14 @@
         .radio-item:has(input:checked) { background: var(--waze-blue); color: white; }
         .radio-item input { display: none; }
 
-        /* Rodapé ADM */
-        .footer-adm { text-align: center; padding: 30px 0; clear: both; }
+        .footer-adm { text-align: center; padding: 30px 0; }
         .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; opacity: 0.3; text-transform: uppercase; }
 
-        /* Modais */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 20px; box-sizing: border-box; }
         .master-card { background: #f0f3f6; width: 100%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); max-height: 90vh; overflow-y: auto; }
         
-        /* Dashboard BI e Listas */
         .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 15px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .mini-card-adm:active { transform: scale(0.95); }
+        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 15px; border-radius: 20px; text-align: center; cursor: pointer; }
         .valor-adm { display: block; font-size: 1.6rem; font-weight: 900; color: var(--waze-blue); line-height: 1; }
         .desc-adm { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; color: #64748b; margin-top: 5px; display: block; }
         
@@ -195,8 +194,7 @@
         const q = document.getElementById('qtd').value;
         if(!q) return alert("Quantas vagas?");
         db.ref('vagas_sp').push({ 
-            qtd: parseInt(q), 
-            tipo: document.getElementById('tipo_via').value, 
+            qtd: parseInt(q), tipo: document.getElementById('tipo_via').value, 
             zona_azul: document.querySelector('input[name="za"]:checked').value, 
             lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 
         });
@@ -218,7 +216,7 @@
             if (status === "OK") {
                 mapCal.setCenter(results[0].geometry.location);
                 mapCal.setZoom(17);
-            } else { alert("Não encontrado."); }
+            }
         });
     }
 
@@ -260,7 +258,6 @@
 
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
     function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display='flex'; }
-    
     function validarAcesso() { 
         if(document.getElementById('senha-adm').value === '290519') { 
             fecharModais(); carregarBI();
@@ -273,7 +270,6 @@
         const cliques = dadosGlobais.reduce((acc, v) => acc + (v.cliques || 0), 0);
         const zaSim = dadosGlobais.filter(v => v.zona_azul === 'Sim').length;
         const zaNao = dadosGlobais.filter(v => v.zona_azul === 'Não').length;
-
         document.getElementById('grid-bi').innerHTML = `
             <div class="mini-card-adm" style="grid-column: span 2; background: #e0f2fe;"><span class="valor-adm">${totalVagas}</span><span class="desc-adm">Vagas Totais</span></div>
             <div class="mini-card-adm" onclick="abrirLista('Geral')"><span class="valor-adm">${dadosGlobais.length}</span><span class="desc-adm">Posts</span></div>
@@ -284,18 +280,11 @@
     }
 
     function abrirLista(tipo) {
-        const container = document.getElementById('lista-detalhada-container');
-        container.innerHTML = "";
+        const container = document.getElementById('lista-detalhada-container'); container.innerHTML = "";
         const filtrados = tipo === 'Geral' ? dadosGlobais : dadosGlobais.filter(v => v.zona_azul === tipo);
-        
         document.getElementById('detalhe-titulo').innerText = `LISTA: ${tipo}`;
-        
         filtrados.slice().reverse().forEach(v => {
-            container.innerHTML += `
-                <div class="rua-item">
-                    <div><b>${v.tipo}</b><br><small>${new Date(v.ts).toLocaleString('pt-BR')}</small></div>
-                    <span style="font-weight:900; color:var(--verde-waze);">${v.qtd} Vagas</span>
-                </div>`;
+            container.innerHTML += `<div class="rua-item"><div><b>${v.tipo}</b><br><small>${new Date(v.ts).toLocaleString('pt-BR')}</small></div><span style="font-weight:900; color:var(--verde-waze);">${v.qtd} Vagas</span></div>`;
         });
         document.getElementById('modal-detalhes').style.display = 'flex';
     }

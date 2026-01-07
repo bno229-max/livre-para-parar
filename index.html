@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP - BI Master 6.0</title>
+    <title>Livre Parar SP - v6.1</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -51,90 +51,33 @@
         .radio-item:has(input:checked) { background: var(--waze-blue); color: white; }
         .radio-item input { display: none; }
 
-        .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; }
-        .legenda-item { flex: 1; font-size: 0.6rem; font-weight: 900; padding: 10px 5px; border-radius: 12px; border: 2px solid var(--waze-dark); color: white; text-align: center; }
-
         .footer-adm { text-align: center; padding: 30px; opacity: 0.2; }
         .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; }
 
-        /* Dashboard Master Drill-down */
+        /* Modais e Dashboard */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 20px; box-sizing: border-box; }
-        .master-card { background: #f0f3f6; width: 100%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); max-height: 90vh; overflow-y: auto; position: relative; }
+        .master-card { background: #f0f3f6; width: 100%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); max-height: 90vh; overflow-y: auto; }
         
         .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 10px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .mini-card-adm:hover { transform: scale(1.02); background: #f8fafc; }
+        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 10px; border-radius: 15px; text-align: center; cursor: pointer; }
         .valor-adm { display: block; font-size: 1.4rem; font-weight: 900; color: var(--waze-blue); line-height: 1; }
         .desc-adm { font-size: 0.5rem; font-weight: 800; text-transform: uppercase; color: #64748b; margin-top: 3px; display: block; }
 
-        /* Lista de Ruas (Detalhes) */
-        #modal-detalhes { z-index: 10000; }
         .lista-ruas { margin-top: 15px; background: white; border-radius: 20px; border: 3px solid var(--waze-dark); padding: 10px; max-height: 300px; overflow-y: auto; }
         .rua-item { padding: 10px; border-bottom: 1px solid #eee; font-size: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
-        .rua-item:last-child { border: none; }
-        .badge-vagas { background: var(--waze-dark); color: white; padding: 2px 8px; border-radius: 10px; font-weight: 900; font-size: 0.65rem; }
 
-        .pico-box { background: white; border: 3px solid var(--waze-dark); border-radius: 20px; margin-top: 15px; padding: 15px; }
-        .pico-title { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; display: block; color: var(--vermelho); }
-        .pico-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #cbd5e1; }
-        .pico-barra { flex: 1; height: 12px; background: #f1f5f9; margin: 0 15px; border-radius: 10px; overflow: hidden; }
-        .pico-preenchimento { height: 100%; background: var(--waze-blue); transition: 0.5s; }
+        /* Balão do Mapa (InfoWindow) Customizado */
+        .info-balao { text-align: center; padding: 5px; font-family: 'Open Sans', sans-serif; min-width: 180px; }
+        .info-tag { display: inline-block; padding: 3px 8px; border-radius: 8px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; border: 1px solid var(--waze-dark); }
+        .tag-za { background: #fee2e2; color: #ef4444; }
+        .tag-livre { background: #dcfce7; color: #10b981; }
     </style>
 </head>
 <body>
 
-<div id="modal-login-adm" class="modal-overlay">
-    <div class="master-card" style="text-align: center; background: white;">
-        <h2 style="margin-bottom: 20px;">🔒 Terminal Master</h2>
-        <input type="password" id="senha-adm" placeholder="Senha de Acesso" style="text-align: center;">
-        <button class="btn-acao btn-indicar" onclick="validarAcesso()">Entrar</button>
-        <p onclick="fecharModais()" style="margin-top:20px; font-size:0.7rem; font-weight:800; color:#94a3b8; cursor:pointer;">VOLTAR</p>
-    </div>
-</div>
-
-<div id="modal-detalhes" class="modal-overlay">
-    <div class="master-card" style="background: white;">
-        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem; text-transform: uppercase;">RUAS ENCONTRADAS</h3>
-        <div id="lista-detalhada" class="lista-ruas">
-            </div>
-        <button class="btn-acao" style="margin-top: 15px; background: var(--waze-dark); color:white; padding: 12px;" onclick="document.getElementById('modal-detalhes').style.display='none'">VOLTAR AO DASHBOARD</button>
-    </div>
-</div>
-
-<div id="modal-acesso-master" class="modal-overlay">
-    <div class="master-card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h3 style="margin:0; font-weight: 900;">DASHBOARD BI v6.0</h3>
-            <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:10px; font-weight:800; cursor:pointer; font-size:0.6rem;">FECHAR</button>
-        </div>
-        <div class="grid-master">
-            <div class="mini-card-adm" style="grid-column: span 2; background: #e0f2fe; cursor: default;">
-                <span class="valor-adm" id="m-vagas-total">0</span>
-                <span class="desc-adm">Soma Geral de Vagas Indicadas</span>
-            </div>
-            <div class="mini-card-adm" onclick="abrirLista('Geral')"><span class="valor-adm" id="m-posts">0</span><span class="desc-adm">Total Indicações</span></div>
-            <div class="mini-card-adm" style="cursor: default;"><span class="valor-adm" id="m-cliques" style="color: var(--amarelo-laranja);">0</span><span class="desc-adm">Cliques "Vamos Lá"</span></div>
-            
-            <div class="mini-card-adm" onclick="abrirLista('Sim')" style="border-bottom: 5px solid var(--waze-blue);">
-                <span class="valor-adm" id="m-za-sim" style="color: var(--waze-blue);">0</span>
-                <span class="desc-adm">Zona Azul (Sim) ➡️</span>
-            </div>
-            <div class="mini-card-adm" onclick="abrirLista('Não')" style="border-bottom: 5px solid var(--waze-dark);">
-                <span class="valor-adm" id="m-za-nao">0</span>
-                <span class="desc-adm">Zona Azul (Não) ➡️</span>
-            </div>
-        </div>
-        
-        <div class="pico-box">
-            <span class="pico-title">🔥 Pico de Demanda (Cliques)</span>
-            <div id="lista-pico">
-                <div class="pico-item"><span class="pico-hora">Manhã</span><div class="pico-barra"><div class="pico-preenchimento" id="bar-manha" style="width: 0%"></div></div><span id="val-manha">0</span></div>
-                <div class="pico-item"><span class="pico-hora">Tarde</span><div class="pico-barra"><div class="pico-preenchimento" id="bar-tarde" style="width: 0%; background: var(--amarelo-laranja);"></div></div><span id="val-tarde">0</span></div>
-                <div class="pico-item"><span class="pico-hora">Noite</span><div class="pico-barra"><div class="pico-preenchimento" id="bar-noite" style="width: 0%; background: var(--vermelho);"></div></div><span id="val-noite">0</span></div>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="modal-login-adm" class="modal-overlay"><div class="master-card" style="text-align: center; background: white;"><h2>🔒 Master</h2><input type="password" id="senha-adm" placeholder="Senha" style="text-align: center;"><button class="btn-acao btn-indicar" onclick="validarAcesso()">Entrar</button><p onclick="fecharModais()" style="cursor:pointer; font-size:0.7rem; margin-top:20px;">VOLTAR</p></div></div>
+<div id="modal-detalhes" class="modal-overlay"><div class="master-card" style="background: white;"><h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem;">LISTA</h3><div id="lista-detalhada" class="lista-ruas"></div><button class="btn-acao" style="margin-top: 15px; background: var(--waze-dark); color:white;" onclick="document.getElementById('modal-detalhes').style.display='none'">VOLTAR</button></div></div>
+<div id="modal-acesso-master" class="modal-overlay"><div class="master-card"><div style="display:flex; justify-content:space-between; align-items:center;"><h3 style="margin:0; font-weight:900;">BI v6.1</h3><button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:none; border-radius:10px; padding:5px 10px; font-weight:800;">X</button></div><div class="grid-master"><div class="mini-card-adm" style="grid-column: span 2; background: #e0f2fe;"><span class="valor-adm" id="m-vagas-total">0</span><span class="desc-adm">Vagas Totais</span></div><div class="mini-card-adm" onclick="abrirLista('Geral')"><span class="valor-adm" id="m-posts">0</span><span class="desc-adm">Posts</span></div><div class="mini-card-adm"><span class="valor-adm" id="m-cliques" style="color: var(--amarelo-laranja);">0</span><span class="desc-adm">Cliques</span></div><div class="mini-card-adm" onclick="abrirLista('Sim')"><span class="valor-adm" id="m-za-sim" style="color:var(--waze-blue);">0</span><span class="desc-adm">Zona Azul (Sim)</span></div><div class="mini-card-adm" onclick="abrirLista('Não')"><span class="valor-adm" id="m-za-nao">0</span><span class="desc-adm">Zona Azul (Não)</span></div></div></div></div>
 
 <nav class="nav">
     <div class="tab active" onclick="switchTab('registrar')">Indicar Vagas</div>
@@ -146,47 +89,24 @@
         <label style="margin-top:0;">📍 Sua Localização</label>
         <div id="mini-mapa" class="map-box"></div>
         <label>Tipo de Via</label>
-        <select id="tipo_via">
-            <option value="Rua Residencial">🏠 Rua Residencial</option>
-            <option value="Avenida">🛣️ Avenida</option>
-            <option value="Praça">🌳 Praça</option>
-            <option value="Estacionamento">🅿️ Estacionamento</option>
-        </select>
+        <select id="tipo_via"><option value="Rua Residencial">🏠 Rua Residencial</option><option value="Avenida">🛣️ Avenida</option><option value="Praça">🌳 Praça</option><option value="Estacionamento">🅿️ Estacionamento</option></select>
         <label>Quantidade de Vagas</label>
         <input type="number" id="qtd" placeholder="Ex: 8" inputmode="numeric">
         <label>Precisa de zona azul?</label>
-        <div class="zona-azul-container">
-            <label class="radio-item"><input type="radio" name="za" value="Sim"> SIM</label>
-            <label class="radio-item"><input type="radio" name="za" value="Não" checked> NÃO</label>
-        </div>
+        <div class="zona-azul-container"><label class="radio-item"><input type="radio" name="za" value="Sim"> SIM</label><label class="radio-item"><input type="radio" name="za" value="Não" checked> NÃO</label></div>
         <button class="btn-acao btn-indicar" onclick="salvarVaga()">Pode parar aqui</button>
     </div>
     <div class="footer-adm"><span class="link-adm" onclick="abrirLoginAdm()">ADM</span></div>
 </div>
 
-<div id="view-calor" class="view">
-    <div class="card" style="padding: 10px;">
-        <div id="mapa-calor" class="map-box"></div>
-        <div class="legenda">
-            <div class="legenda-item" style="background:var(--verde-waze)">MAIS DE 10</div>
-            <div class="legenda-item" style="background:var(--amarelo-laranja)">5 A 10</div>
-            <div class="legenda-item" style="background:var(--vermelho)">POUCAS</div>
-        </div>
-    </div>
-</div>
+<div id="view-calor" class="view"><div class="card" style="padding: 10px;"><div id="mapa-calor" class="map-box"></div></div></div>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyCv33-vr99tYWdxdeJP4rsp39ro5M2gZNo",
-        authDomain: "olhar-urbano.firebaseapp.com",
-        databaseURL: "https://olhar-urbano-default-rtdb.firebaseio.com",
-        projectId: "olhar-urbano"
-    };
+    const firebaseConfig = { apiKey: "AIzaSyCv33-vr99tYWdxdeJP4rsp39ro5M2gZNo", authDomain: "olhar-urbano.firebaseapp.com", databaseURL: "https://olhar-urbano-default-rtdb.firebaseio.com", projectId: "olhar-urbano" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     let userLoc = { lat: -23.5505, lng: -46.6333 };
-    let mapReg, mapCal, heatmap, infoWindow;
-    let dadosGlobais = [];
+    let mapReg, mapCal, heatmap, infoWindow, dadosGlobais = [];
 
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none'); }
     function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display = 'flex'; }
@@ -196,60 +116,23 @@
         db.ref('vagas_sp').once('value', snap => {
             const data = snap.val(); if(!data) return;
             dadosGlobais = Object.values(data);
-            
             document.getElementById('m-posts').innerText = dadosGlobais.length;
             document.getElementById('m-vagas-total').innerText = dadosGlobais.reduce((acc, v) => acc + (v.qtd || 0), 0);
             document.getElementById('m-cliques').innerText = dadosGlobais.reduce((acc, v) => acc + (v.cliques || 0), 0);
             document.getElementById('m-za-sim').innerText = dadosGlobais.filter(v => v.zona_azul === 'Sim').length;
             document.getElementById('m-za-nao').innerText = dadosGlobais.filter(v => v.zona_azul === 'Não').length;
-
-            let h = { manha: 0, tarde: 0, noite: 0 };
-            dadosGlobais.forEach(v => {
-                let hour = new Date(v.ts).getHours();
-                let c = v.cliques || 0;
-                if(hour >= 6 && hour < 12) h.manha += c;
-                else if(hour >= 12 && hour < 18) h.tarde += c;
-                else h.noite += c;
-            });
-            const max = Math.max(h.manha, h.tarde, h.noite, 1);
-            document.getElementById('val-manha').innerText = h.manha;
-            document.getElementById('bar-manha').style.width = (h.manha/max*100) + "%";
-            document.getElementById('val-tarde').innerText = h.tarde;
-            document.getElementById('bar-tarde').style.width = (h.tarde/max*100) + "%";
-            document.getElementById('val-noite').innerText = h.noite;
-            document.getElementById('bar-noite').style.width = (h.noite/max*100) + "%";
         });
     }
 
-    // NOVA FUNÇÃO: ABRIR LISTA DETALHADA
     function abrirLista(tipo) {
-        const modal = document.getElementById('modal-detalhes');
-        const titulo = document.getElementById('detalhe-titulo');
         const container = document.getElementById('lista-detalhada');
-        
-        titulo.innerText = tipo === 'Geral' ? "TODAS AS INDICAÇÕES" : `VIAS: ZONA AZUL ${tipo.toUpperCase()}`;
         container.innerHTML = "";
-
         const filtrados = tipo === 'Geral' ? dadosGlobais : dadosGlobais.filter(v => v.zona_azul === tipo);
-
-        if(filtrados.length === 0) {
-            container.innerHTML = "<p style='text-align:center; padding:20px; font-size:0.8rem;'>Nenhum registro encontrado.</p>";
-        } else {
-            filtrados.reverse().forEach(v => {
-                const dataStr = new Date(v.ts).toLocaleDateString('pt-BR') + " " + new Date(v.ts).getHours() + ":" + new Date(v.ts).getMinutes().toString().padStart(2,'0');
-                const div = document.createElement('div');
-                div.className = 'rua-item';
-                div.innerHTML = `
-                    <div>
-                        <b style="color:var(--waze-dark)">${v.tipo}</b><br>
-                        <small style="color:#94a3b8">${dataStr}</small>
-                    </div>
-                    <span class="badge-vagas">${v.qtd} VAGAS</span>
-                `;
-                container.appendChild(div);
-            });
-        }
-        modal.style.display = 'flex';
+        filtrados.reverse().forEach(v => {
+            const dataStr = new Date(v.ts).toLocaleDateString('pt-BR') + " " + new Date(v.ts).getHours() + ":" + new Date(v.ts).getMinutes().toString().padStart(2,'0');
+            container.innerHTML += `<div class="rua-item"><div><b>${v.tipo}</b><br><small>${dataStr}</small></div><span style="font-weight:900;">${v.qtd} VAGAS</span></div>`;
+        });
+        document.getElementById('modal-detalhes').style.display = 'flex';
     }
 
     function start() {
@@ -277,10 +160,9 @@
 
     function salvarVaga() {
         const qtd = document.getElementById('qtd').value;
-        if(!qtd) return alert("Quantas vagas você viu?");
+        if(!qtd) return alert("Quantas vagas?");
         db.ref('vagas_sp').push({ qtd: parseInt(qtd), tipo: document.getElementById('tipo_via').value, zona_azul: document.querySelector('input[name="za"]:checked').value, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 });
-        alert("Obrigado por ajudar!");
-        document.getElementById('qtd').value = "";
+        alert("Valeu pela ajuda!"); document.getElementById('qtd').value = "";
     }
 
     window.registrarIrAteLa = function(id, lat, lng) {
@@ -296,26 +178,26 @@
             Object.keys(data).forEach(id => {
                 const v = data[id];
                 points.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
-                const m = new google.maps.Marker({ 
-                    position: {lat:v.lat, lng:v.lng}, map: mapCal, 
-                    label: { text: "📍", fontSize: v.cliques > 5 ? "26px" : "20px" },
-                    icon: { path: google.maps.SymbolPath.CIRCLE, fillOpacity: 0, strokeOpacity: 0 }
-                });
+                const m = new google.maps.Marker({ position: {lat:v.lat, lng:v.lng}, map: mapCal, icon: { path: google.maps.SymbolPath.CIRCLE, scale: 10, fillOpacity: 0, strokeOpacity: 0 } });
+                
                 m.addListener("click", () => {
+                    const dt = new Date(v.ts);
+                    const hora = `${dt.getDate().toString().padStart(2,'0')}/${(dt.getMonth()+1).toString().padStart(2,'0')} às ${dt.getHours().toString().padStart(2,'0')}:${dt.getMinutes().toString().padStart(2,'0')}`;
+                    const tagZA = v.zona_azul === 'Sim' ? '<span class="info-tag tag-za">Zona Azul: SIM</span>' : '<span class="info-tag tag-livre">LIVRE DE ZONA AZUL</span>';
+                    
                     infoWindow.setContent(`
-                        <div style="text-align:center; padding:10px; font-family:sans-serif;">
-                            <b style="font-size:1.1rem; text-transform:uppercase;">${v.tipo}</b><br>
-                            <span style="font-weight:900; color:var(--verde-waze); font-size:1.2rem;">${v.qtd} VAGAS LIVRES</span><br>
+                        <div class="info-balao">
+                            <b style="font-size:1rem; text-transform:uppercase;">${v.tipo}</b><br>
+                            ${tagZA}<br>
+                            <span style="font-weight:900; color:var(--verde-waze); font-size:1.1rem;">${v.qtd} VAGAS DISPONÍVEIS</span><br>
+                            <small style="color:#64748b; display:block; margin: 5px 0;">Atualizado: ${hora}</small>
                             <button onclick="registrarIrAteLa('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS LÁ!</button>
                         </div>`);
                     infoWindow.open(mapCal, m);
                 });
             });
             if(heatmap) heatmap.setMap(null);
-            heatmap = new google.maps.visualization.HeatmapLayer({ 
-                data: points, map: mapCal, radius: 45,
-                gradient: ['rgba(0, 255, 255, 0)','rgba(239, 68, 68, 1)','rgba(245, 158, 11, 1)','rgba(16, 185, 129, 1)']
-            });
+            heatmap = new google.maps.visualization.HeatmapLayer({ data: points, map: mapCal, radius: 45 });
         });
     }
     window.onload = start;

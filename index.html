@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Livre Parar SP - v6.8</title>
+    <title>Livre Parar - v7.2</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -19,6 +19,7 @@
         
         body { font-family: 'Open Sans', sans-serif; background: #f0f3f6; margin: 0; color: var(--waze-dark); overflow-x: hidden; }
         
+        /* Navegação Superior */
         .nav { display: flex; background: white; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .tab { flex: 1; padding: 14px 5px; text-align: center; font-weight: 800; cursor: pointer; color: #94a3b8; font-size: 0.7rem; border-radius: 20px; transition: 0.2s; text-transform: uppercase; }
         .tab.active { background: var(--waze-blue); color: white; box-shadow: 0 4px 12px rgba(51, 204, 255, 0.3); }
@@ -27,6 +28,7 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
 
+        /* Estilo dos Cards e Inputs */
         .card { background: white; border-radius: 25px; padding: 20px; margin-bottom: 20px; border: 3px solid var(--waze-dark); box-shadow: 8px 8px 0px rgba(0,0,0,0.05); }
         .map-box { width: 100%; border-radius: 20px; background: #e2e8f0; border: 3px solid var(--waze-dark); overflow: hidden; }
         #mini-mapa { height: 200px; margin-bottom: 15px; }
@@ -35,13 +37,13 @@
         label { font-size: 0.8rem; font-weight: 900; color: var(--waze-dark); text-transform: uppercase; display: block; margin-top: 15px; }
         select, input { width: 100%; padding: 15px; border-radius: 15px; border: 3px solid var(--waze-dark); background: #f8fafc; font-size: 1rem; font-weight: 600; box-sizing: border-box; margin-top: 5px; outline: none; }
 
+        /* Botões Estilo Waze */
         .btn-acao { 
             width: 100%; border: 3px solid var(--waze-dark); padding: 18px; border-radius: 50px; 
             font-weight: 900; cursor: pointer; font-size: 1rem; transition: all 0.1s; 
             box-shadow: 0 6px 0px var(--waze-dark); text-transform: uppercase;
         }
         .btn-acao:active { transform: translateY(4px); box-shadow: 0 2px 0px var(--waze-dark); }
-        
         .btn-indicar { background: var(--verde-waze); color: white; margin-top: 25px; }
         .btn-vamos { background: var(--waze-blue); color: white; margin-top: 10px; border: 2px solid var(--waze-dark); box-shadow: 0 4px 0px var(--waze-dark); }
         .btn-buscar { background: var(--amarelo-laranja); color: white; margin-top: 10px; padding: 12px; font-size: 0.8rem; }
@@ -51,19 +53,22 @@
         .radio-item:has(input:checked) { background: var(--waze-blue); color: white; }
         .radio-item input { display: none; }
 
-        .footer-adm { text-align: center; padding: 20px 0; margin-top: 10px; }
-        .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; opacity: 0.4; text-transform: uppercase; }
+        /* Rodapé ADM */
+        .footer-adm { text-align: center; padding: 30px 0; clear: both; }
+        .link-adm { color: #64748b; font-size: 0.6rem; font-weight: 900; cursor: pointer; letter-spacing: 3px; opacity: 0.3; text-transform: uppercase; }
 
+        /* Modais */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 20px; box-sizing: border-box; }
         .master-card { background: #f0f3f6; width: 100%; max-width: 450px; border-radius: 35px; border: 4px solid var(--waze-dark); padding: 25px; box-shadow: 12px 12px 0px var(--waze-dark); max-height: 90vh; overflow-y: auto; }
         
-        #modal-detalhes { z-index: 10001; }
-        .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 10px; border-radius: 15px; text-align: center; cursor: pointer; }
-        .valor-adm { display: block; font-size: 1.4rem; font-weight: 900; color: var(--waze-blue); line-height: 1; }
-        .desc-adm { font-size: 0.5rem; font-weight: 800; text-transform: uppercase; color: #64748b; margin-top: 3px; display: block; }
-
-        .lista-ruas { margin-top: 15px; background: white; border-radius: 20px; border: 3px solid var(--waze-dark); padding: 10px; max-height: 350px; overflow-y: auto; }
+        /* Dashboard BI e Listas */
+        .grid-master { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .mini-card-adm { background: white; border: 3px solid var(--waze-dark); padding: 15px; border-radius: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .mini-card-adm:active { transform: scale(0.95); }
+        .valor-adm { display: block; font-size: 1.6rem; font-weight: 900; color: var(--waze-blue); line-height: 1; }
+        .desc-adm { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; color: #64748b; margin-top: 5px; display: block; }
+        
+        .lista-detalhada { margin-top: 15px; background: white; border-radius: 20px; border: 3px solid var(--waze-dark); overflow: hidden; }
         .rua-item { padding: 12px; border-bottom: 2px solid #f0f3f6; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; }
 
         .legenda { display: flex; justify-content: space-around; gap: 8px; margin-top: 15px; margin-bottom: 10px; }
@@ -71,6 +76,16 @@
     </style>
 </head>
 <body>
+
+<div id="modal-engajamento" class="modal-overlay">
+    <div class="master-card" style="text-align: center; background: white;">
+        <div style="font-size: 4rem; margin-bottom: 10px;">🏆</div>
+        <h2 style="margin: 0; font-weight: 900; color: var(--waze-blue);">VOCÊ É DEMAIS!</h2>
+        <p id="msg-conquista" style="font-weight: 700; color: var(--waze-dark); margin: 15px 0;">Já indicou 5 vagas!</p>
+        <p style="font-size: 0.8rem; color: #64748b;">Sua ajuda faz a cidade melhor para todos os motoristas.</p>
+        <button class="btn-acao btn-vamos" onclick="fecharModais()">CONTINUAR AJUDANDO</button>
+    </div>
+</div>
 
 <div id="modal-login-adm" class="modal-overlay">
     <div class="master-card" style="text-align: center; background: white;">
@@ -81,21 +96,21 @@
     </div>
 </div>
 
-<div id="modal-detalhes" class="modal-overlay">
-    <div class="master-card" style="background: white;">
-        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem; text-transform: uppercase; color: var(--waze-blue);">LISTA</h3>
-        <div id="lista-detalhada" class="lista-ruas"></div>
-        <button class="btn-acao" style="margin-top: 15px; background: var(--waze-dark); color:white; padding: 12px;" onclick="document.getElementById('modal-detalhes').style.display='none'">VOLTAR</button>
-    </div>
-</div>
-
 <div id="modal-acesso-master" class="modal-overlay">
     <div class="master-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 style="margin:0; font-weight: 900;">DASHBOARD BI</h3>
             <button onclick="fecharModais()" style="background:var(--vermelho); color:white; border:2px solid var(--waze-dark); padding:5px 10px; border-radius:10px; font-weight:800; cursor:pointer;">X</button>
         </div>
-        <div class="grid-master" id="grid-bi"></div>
+        <div id="grid-bi" class="grid-master"></div>
+    </div>
+</div>
+
+<div id="modal-detalhes" class="modal-overlay">
+    <div class="master-card" style="background: white;">
+        <h3 id="detalhe-titulo" style="margin:0; font-weight: 900; font-size: 1rem; text-transform: uppercase; color: var(--waze-blue);">LISTA</h3>
+        <div id="lista-detalhada-container" class="lista-detalhada"></div>
+        <button class="btn-acao" style="margin-top: 15px; background: var(--waze-dark); color:white; padding: 12px;" onclick="document.getElementById('modal-detalhes').style.display='none'">VOLTAR</button>
     </div>
 </div>
 
@@ -146,7 +161,9 @@
     const firebaseConfig = { apiKey: "AIzaSyCv33-vr99tYWdxdeJP4rsp39ro5M2gZNo", authDomain: "olhar-urbano.firebaseapp.com", databaseURL: "https://olhar-urbano-default-rtdb.firebaseio.com", projectId: "olhar-urbano" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    
     let userLoc = { lat: -23.5505, lng: -46.6333 }, mapReg, mapCal, infoWindow, heatmap, dadosGlobais = [], geocoder;
+    let contadorVagas = parseInt(localStorage.getItem('vagas_contagem')) || 0;
 
     const wazeStyle = [{"featureType":"landscape","stylers":[{"color":"#f0f3f6"}]},{"featureType":"road","elementType":"geometry","stylers":[{"color":"#ffffff"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#fffbc2"}]}];
 
@@ -163,6 +180,8 @@
             userLoc = { lat: p.coords.latitude, lng: p.coords.longitude };
             mapReg = new google.maps.Map(document.getElementById("mini-mapa"), { zoom: 17, center: userLoc, disableDefaultUI: true, styles: wazeStyle });
             new google.maps.Marker({ position: userLoc, map: mapReg });
+        }, () => {
+            mapReg = new google.maps.Map(document.getElementById("mini-mapa"), { zoom: 15, center: userLoc, disableDefaultUI: true, styles: wazeStyle });
         });
     };
 
@@ -175,13 +194,26 @@
     function salvarVaga() {
         const q = document.getElementById('qtd').value;
         if(!q) return alert("Quantas vagas?");
-        db.ref('vagas_sp').push({ qtd: parseInt(q), tipo: document.getElementById('tipo_via').value, zona_azul: document.querySelector('input[name="za"]:checked').value, lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 });
-        alert("Enviado!"); document.getElementById('qtd').value = "";
+        db.ref('vagas_sp').push({ 
+            qtd: parseInt(q), 
+            tipo: document.getElementById('tipo_via').value, 
+            zona_azul: document.querySelector('input[name="za"]:checked').value, 
+            lat: userLoc.lat, lng: userLoc.lng, ts: Date.now(), cliques: 0 
+        });
+        
+        contadorVagas++;
+        localStorage.setItem('vagas_contagem', contadorVagas);
+        
+        if(contadorVagas % 5 === 0) {
+            document.getElementById('msg-conquista').innerText = `Uau! Você já indicou ${contadorVagas} vagas no total!`;
+            document.getElementById('modal-engajamento').style.display = 'flex';
+        } else { alert("Vaga indicada com sucesso!"); }
+        document.getElementById('qtd').value = "";
     }
 
     function buscarDestino() {
         const endereco = document.getElementById('input-destino').value;
-        if(!endereco) return alert("Digite um endereço!");
+        if(!endereco) return alert("Digite o endereço!");
         geocoder.geocode({ address: endereco }, (results, status) => {
             if (status === "OK") {
                 mapCal.setCenter(results[0].geometry.location);
@@ -199,15 +231,20 @@
                 const v = data[id];
                 points.push({ location: new google.maps.LatLng(v.lat, v.lng), weight: v.qtd });
                 const marker = new google.maps.Marker({
-                    position: {lat: v.lat, lng: v.lng},
-                    map: mapCal,
+                    position: {lat: v.lat, lng: v.lng}, map: mapCal,
                     icon: { url: 'data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text y="30" font-size="30">📍</text></svg>', scaledSize: new google.maps.Size(40, 40) }
                 });
                 marker.addListener("click", () => {
                     const dt = new Date(v.ts);
-                    const dataHora = `${dt.toLocaleDateString('pt-BR')} às ${dt.getHours().toString().padStart(2,'0')}:${dt.getMinutes().toString().padStart(2,'0')}`;
-                    const zaTxt = v.zona_azul === 'Sim' ? '🔴 ZONA AZUL' : '🟢 LIVRE';
-                    infoWindow.setContent(`<div style="text-align:center; padding:5px; font-family:sans-serif;"><b>${v.tipo}</b><br><small>${zaTxt}</small><br><span style="font-weight:900; color:var(--verde-waze); font-size:1rem;">${v.qtd} VAGAS</span><br><small style="color:#666">Atualizado: ${dataHora}</small><br><button onclick="ir('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS!</button></div>`);
+                    const dh = `${dt.toLocaleDateString('pt-BR')} às ${dt.getHours().toString().padStart(2,'0')}:${dt.getMinutes().toString().padStart(2,'0')}`;
+                    const za = v.zona_azul === 'Sim' ? '🔴 ZONA AZUL' : '🟢 LIVRE';
+                    infoWindow.setContent(`
+                        <div style="text-align:center; padding:5px; font-family:sans-serif;">
+                            <b>${v.tipo}</b><br><small>${za}</small><br>
+                            <span style="font-weight:900; color:var(--verde-waze); font-size:1.1rem;">${v.qtd} VAGAS</span><br>
+                            <small style="color:#666">Atualizado: ${dh}</small><br>
+                            <button onclick="ir('${id}', ${v.lat}, ${v.lng})" class="btn-acao btn-vamos">VAMOS!</button>
+                        </div>`);
                     infoWindow.open(mapCal, marker);
                 });
             });
@@ -218,29 +255,28 @@
 
     window.ir = function(id, lat, lng) {
         db.ref('vagas_sp/'+id+'/cliques').transaction(c => (c||0)+1);
-        window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`);
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`);
     }
 
     function fecharModais() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
     function abrirLoginAdm() { document.getElementById('modal-login-adm').style.display='flex'; }
+    
     function validarAcesso() { 
         if(document.getElementById('senha-adm').value === '290519') { 
-            fecharModais(); 
+            fecharModais(); carregarBI();
             document.getElementById('modal-acesso-master').style.display='flex'; 
-            carregarBI();
-        } else { alert("Erro!"); }
+        } else { alert("Senha incorreta!"); }
     }
 
     function carregarBI() {
-        const entries = dadosGlobais;
-        const totalVagas = entries.reduce((acc, v) => acc + (v.qtd || 0), 0);
-        const cliques = entries.reduce((acc, v) => acc + (v.cliques || 0), 0);
-        const zaSim = entries.filter(v => v.zona_azul === 'Sim').length;
-        const zaNao = entries.filter(v => v.zona_azul === 'Não').length;
+        const totalVagas = dadosGlobais.reduce((acc, v) => acc + (v.qtd || 0), 0);
+        const cliques = dadosGlobais.reduce((acc, v) => acc + (v.cliques || 0), 0);
+        const zaSim = dadosGlobais.filter(v => v.zona_azul === 'Sim').length;
+        const zaNao = dadosGlobais.filter(v => v.zona_azul === 'Não').length;
 
         document.getElementById('grid-bi').innerHTML = `
             <div class="mini-card-adm" style="grid-column: span 2; background: #e0f2fe;"><span class="valor-adm">${totalVagas}</span><span class="desc-adm">Vagas Totais</span></div>
-            <div class="mini-card-adm" onclick="abrirLista('Geral')"><span class="valor-adm">${entries.length}</span><span class="desc-adm">Posts</span></div>
+            <div class="mini-card-adm" onclick="abrirLista('Geral')"><span class="valor-adm">${dadosGlobais.length}</span><span class="desc-adm">Posts</span></div>
             <div class="mini-card-adm"><span class="valor-adm" style="color:var(--amarelo-laranja)">${cliques}</span><span class="desc-adm">Cliques</span></div>
             <div class="mini-card-adm" onclick="abrirLista('Sim')"><span class="valor-adm" style="color:var(--waze-blue)">${zaSim}</span><span class="desc-adm">Zona Azul</span></div>
             <div class="mini-card-adm" onclick="abrirLista('Não')"><span class="valor-adm">${zaNao}</span><span class="desc-adm">Livre</span></div>
@@ -248,11 +284,18 @@
     }
 
     function abrirLista(tipo) {
-        const container = document.getElementById('lista-detalhada');
+        const container = document.getElementById('lista-detalhada-container');
         container.innerHTML = "";
         const filtrados = tipo === 'Geral' ? dadosGlobais : dadosGlobais.filter(v => v.zona_azul === tipo);
-        filtrados.reverse().forEach(v => {
-            container.innerHTML += `<div class="rua-item"><div><b>${v.tipo}</b><br><small>${new Date(v.ts).toLocaleString()}</small></div><span style="font-weight:900">${v.qtd} vgs</span></div>`;
+        
+        document.getElementById('detalhe-titulo').innerText = `LISTA: ${tipo}`;
+        
+        filtrados.slice().reverse().forEach(v => {
+            container.innerHTML += `
+                <div class="rua-item">
+                    <div><b>${v.tipo}</b><br><small>${new Date(v.ts).toLocaleString('pt-BR')}</small></div>
+                    <span style="font-weight:900; color:var(--verde-waze);">${v.qtd} Vagas</span>
+                </div>`;
         });
         document.getElementById('modal-detalhes').style.display = 'flex';
     }
